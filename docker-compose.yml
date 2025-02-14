@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: vakantie_vila_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: vakantie_vila
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  php:
+    build: ./server
+    container_name: vakantie_vila_php
+    ports:
+      - "8000:80"
+    volumes:
+      - ./server:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
