@@ -1,15 +1,17 @@
 export interface Property {
   id: number;
-  title: string;
-  description: string;
-  price: number;
+  name: string;
   location: string;
-  bedrooms: number;
-  bathrooms: number;
-  size: number;
+  country: string;
+  address: string;
+  capacity: number;
+  price: number;
+  description: string;
+  amenities?: string;
+  created_at: string;
   images: string[];
-  features: string[];
-  createdAt: Date;
+  title: string;
+  bedrooms: number;
 }
 
 export interface PropertyFilter {

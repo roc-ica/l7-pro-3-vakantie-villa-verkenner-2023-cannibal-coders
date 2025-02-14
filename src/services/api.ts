@@ -1,25 +1,19 @@
-import axios from 'axios';
 import { Property, PropertyFilter } from '../types/property';
 
-const api = axios.create({
-    baseURL: 'http://localhost:8000/api',
-    headers: {
-        'Content-Type': 'application/json',
-    }
-});
-
-export const testConnection = () => api.get('/test.php');
+const API_URL = 'http://localhost:8000/api';
 
 export const propertyService = {
-  getProperties: async (filters?: PropertyFilter) => {
-    const response = await api.get(`/properties`, { params: filters });
-    return response.data;
-  },
-
-  getPropertyById: async (id: number): Promise<Property> => {
-    const response = await api.get(`/properties/${id}`);
-    return response.data;
-  },
+  async getProperties(filters?: PropertyFilter): Promise<Property[]> {
+    try {
+      const response = await fetch(`${API_URL}/properties.php`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      return data.properties;
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+      return [];
+    }
+  }
 };
-
-export default api;

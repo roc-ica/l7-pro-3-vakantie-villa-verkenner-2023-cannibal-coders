@@ -7,6 +7,10 @@ interface PropertyListProps {
 }
 
 const PropertyList: React.FC<PropertyListProps> = ({ properties }) => {
+  if (!properties.length) {
+    return <div className="text-center py-8">No properties found</div>;
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {properties.map((property) => (

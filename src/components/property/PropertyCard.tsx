@@ -7,12 +7,21 @@ interface PropertyCardProps {
 
 const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <img src={property.images[0]} alt={property.title} className="w-full h-48 object-cover" />
-      <div className="p-4">
-        <h3 className="text-lg font-semibold">{property.title}</h3>
-        <p className="text-gray-600">{property.location}</p>
-        <p className="text-blue-600 font-bold mt-2">€{property.price.toLocaleString()}</p>
+    <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+      <div className="p-6">
+        <h2 className="text-xl font-bold mb-2">{property.name}</h2>
+        <p className="text-gray-600 mb-4">{property.location}, {property.country}</p>
+        <div className="mb-4">
+          <p className="text-gray-700">{property.description}</p>
+        </div>
+        <div className="flex justify-between items-center">
+          <div className="text-xl font-bold text-blue-600">
+            €{property.price.toLocaleString()}
+          </div>
+          <div className="text-gray-600">
+            Capacity: {property.capacity} persons
+          </div>
+        </div>
       </div>
     </div>
   );

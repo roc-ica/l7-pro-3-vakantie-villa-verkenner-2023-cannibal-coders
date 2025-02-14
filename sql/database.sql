@@ -1,4 +1,5 @@
-CREATE DATABASE IF NOT EXISTS vakantie_vila;
+DROP DATABASE IF EXISTS vakantie_vila;
+CREATE DATABASE vakantie_vila;
 USE vakantie_vila;
 
 CREATE TABLE IF NOT EXISTS users (
@@ -12,8 +13,12 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS properties (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    description TEXT,
-    price DECIMAL(10,2) NOT NULL,
     location VARCHAR(100) NOT NULL,
+    country VARCHAR(50) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    capacity INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    description TEXT,
+    amenities TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
