@@ -2,11 +2,11 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/common/Navbar';
 import LandingPage from './pages/LandingPage';
-import PropertyPage from './features/properties/PropertyPage';
-import SearchPage from './features/search/SearchPage';
-import LoginPage from './features/auth/LoginPage';
-import RegisterPage from './features/auth/RegisterPage';
-import PropertyDetailsPage from './features/properties/PropertyDetailsPage';
+import PropertyPage from './pages/properties/PropertyPage';
+import SearchPage from './pages/search/SearchPage';
+import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
+import PropertyDetailsPage from './pages/properties/PropertyDetailsPage';
 import Footer from './components/common/Footer';
 
 const App: React.FC = () => {

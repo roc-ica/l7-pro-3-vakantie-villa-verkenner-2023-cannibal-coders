@@ -33,7 +33,7 @@ const LandingPage: React.FC = () => {
             <Link to="/login" className="transform hover:scale-105 transition-transform">
               <div className="bg-white p-6 rounded-lg shadow-md">
                 <h2 className="text-xl font-semibold mb-4">Member Area</h2>
-                <p className="text-gray-600">Login or register to manage bookings</p>
+                <p className="text-gray-600">Login or register to manage intrests</p>
               </div>
             </Link>
           </div>
