@@ -11,7 +11,7 @@ const initialState: PropertyState = {
   loading: false,
 };
 
-const propertySlice = createSlice({
+export const propertySlice = createSlice({
   name: 'properties',
   initialState,
   reducers: {
@@ -25,4 +25,5 @@ const propertySlice = createSlice({
 });
 
 export const { setProperties, setLoading } = propertySlice.actions;
+
 export default propertySlice.reducer;

@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Only keep essential Leaflet overrides */
+.leaflet-container {
+  @apply w-full h-full rounded-lg;
+}

@@ -17,8 +17,27 @@ CREATE TABLE IF NOT EXISTS properties (
     country VARCHAR(50) NOT NULL,
     address VARCHAR(255) NOT NULL,
     capacity INT NOT NULL,
+    bedrooms INT NOT NULL,
     price DECIMAL(10,2) NOT NULL,
     description TEXT,
     amenities TEXT,
+    image_url TEXT NOT NULL,
+    status ENUM('available', 'sold', 'pending') DEFAULT 'available',
+    property_type ENUM('apartment', 'house', 'villa', 'cabin', 'tent', 'loft') NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS property_images (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    property_id INT NOT NULL,
+    image_url TEXT NOT NULL,
+    image_type ENUM('interior', 'exterior', 'surroundings') NOT NULL,
+    description VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (property_id) REFERENCES properties(id)
+);
+
+-- Add this at the end of your database.sql file to verify data
+SELECT 'Verifying database setup...' as '';
+SELECT COUNT(*) as property_count FROM properties;
+SELECT COUNT(*) as image_count FROM property_images;

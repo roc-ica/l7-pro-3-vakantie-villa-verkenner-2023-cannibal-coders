@@ -1,12 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { propertyReducer, authReducer } from '../features';
+import propertiesReducer from '../features/properties/propertySlice';
 import searchReducer from '../features/search/searchSlice';
 
 export const store = configureStore({
   reducer: {
-    properties: propertyReducer,
-    auth: authReducer,
-    search: searchReducer
+    properties: propertiesReducer,
+    search: searchReducer,
   },
 });
 
