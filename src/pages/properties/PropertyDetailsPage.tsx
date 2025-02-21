@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaBed, FaUsers, FaMapMarkerAlt, FaEuroSign } from 'react-icons/fa';
+import { FaBed, FaUsers, FaMapMarkerAlt, FaEuroSign, FaDownload } from 'react-icons/fa';
 import { Property } from '../../types/property';
 import { propertyService } from '../../services/api';
 import { amenities } from '../../data/amenities';
 import PropertyMap from './components/map/PropertyMap';
 import ImageCarousel from './components/ImageCarousel/ImageCarousel';
 import { formatPrice } from '../../utils/formatters';
+import { generatePropertyPDF } from '../../components/pdf/PropertyPDFGenerator';
 
 const PropertyDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -34,6 +35,12 @@ const PropertyDetailsPage: React.FC = () => {
     if (!amenitiesString) return [];
     const amenityIds = amenitiesString.split(',').map(id => id.trim());
     return amenities.filter(amenity => amenityIds.includes(amenity.id));
+  };
+
+  const handleGeneratePDF = () => {
+    if (property) {
+      generatePropertyPDF(property);
+    }
   };
 
   if (loading) {
@@ -196,6 +203,13 @@ const PropertyDetailsPage: React.FC = () => {
                   </button>
                   <button className="w-full border-2 border-blue-600 text-blue-600 py-3 px-6 rounded-lg hover:bg-blue-50 transition-all">
                     Save Property
+                  </button>
+                  <button 
+                    onClick={handleGeneratePDF}
+                    className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-all"
+                  >
+                    <FaDownload />
+                    Download PDF
                   </button>
                 </div>
                 
