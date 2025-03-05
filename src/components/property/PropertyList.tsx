@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaMapMarkerAlt, FaStar, FaBed, FaBath, FaUsers, FaRegHeart, FaHeart, FaHome, FaRulerCombined, FaWifi } from 'react-icons/fa';
 import { Property, PropertyStatus } from '../../types/property';
 import { formatPrice, getStatusColor } from '../../utils/formatters';
+import { formatImageUrl, getPlaceholderForType } from '../../utils/imageUtils'; // Import the image utilities
 import MapView from './MapView';
 
 interface PropertyListProps {
@@ -14,6 +15,7 @@ interface PropertyListProps {
 const PropertyCard: React.FC<{ property: Property; index: number }> = ({ property, index }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -63,12 +65,22 @@ const PropertyCard: React.FC<{ property: Property; index: number }> = ({ propert
               </div>
             </div>
             
-            {/* Actual image */}
+            {/* Actual image - Fixed with proper loading handlers and classes */}
             <img 
-              src={property.image_url || 'https://via.placeholder.com/800x600?text=No+Image'}
+              src={imageError ? getPlaceholderForType('property') : formatImageUrl(property.image_url)}
               alt={property.name || property.title || 'Property Image'}
               className={`w-full h-full object-cover transition-opacity duration-500 ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
               onLoad={() => setIsImageLoaded(true)}
+              onError={(e) => {
+                setImageError(true);
+                setIsImageLoaded(true);
+                // Prevent infinite loading attempts
+                const target = e.target as HTMLImageElement;
+                if (!target.src.includes('placeholder')) {
+                  target.src = getPlaceholderForType('property');
+                  target.onerror = null;
+                }
+              }}
             />
             
             {/* Overlay gradient on hover */}

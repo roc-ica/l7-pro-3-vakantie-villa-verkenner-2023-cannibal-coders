@@ -1,7 +1,9 @@
+-- Create database
 DROP DATABASE IF EXISTS vakantie_vila;
 CREATE DATABASE vakantie_vila;
 USE vakantie_vila;
 
+-- Users table
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
@@ -9,13 +11,11 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     first_name VARCHAR(50),
     last_name VARCHAR(50),
-    phone VARCHAR(20),
-    avatar_url TEXT,
     role ENUM('user', 'admin') DEFAULT 'user',
-    last_login TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Properties table
 CREATE TABLE IF NOT EXISTS properties (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -24,33 +24,33 @@ CREATE TABLE IF NOT EXISTS properties (
     address VARCHAR(255) NOT NULL,
     capacity INT NOT NULL,
     bedrooms INT NOT NULL,
+    bathrooms DECIMAL(3,1) DEFAULT 1.0,
     price DECIMAL(10,2) NOT NULL,
     description TEXT,
     amenities TEXT,
-    image_url TEXT NOT NULL,
+    image_url TEXT,
     status ENUM('available', 'sold', 'pending') DEFAULT 'available',
-    property_type ENUM('apartment', 'house', 'villa', 'cabin', 'tent', 'loft') NOT NULL,
+    property_type ENUM('apartment', 'house', 'villa', 'cabin', 'tent', 'loft') DEFAULT 'villa',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Property images table
 CREATE TABLE IF NOT EXISTS property_images (
     id INT AUTO_INCREMENT PRIMARY KEY,
     property_id INT NOT NULL,
     image_url TEXT NOT NULL,
-    image_type ENUM('interior', 'exterior', 'surroundings') NOT NULL,
+    image_type VARCHAR(20),
     description VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (property_id) REFERENCES properties(id)
+    FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE
 );
 
+-- Hero images table
 CREATE TABLE IF NOT EXISTS hero_images (
     id INT AUTO_INCREMENT PRIMARY KEY,
     url VARCHAR(255) NOT NULL,
-    location VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    location VARCHAR(100) NOT NULL
 );
 
--- Add this at the end of your database.sql file to verify data
-SELECT 'Verifying database setup...' as '';
-SELECT COUNT(*) as property_count FROM properties;
-SELECT COUNT(*) as image_count FROM property_images;
+-- Admin user
+INSERT INTO users (username, email, password, first_name, last_name, role) VALUES
+('admin', 'admin@example.com', '$2y$10$uM6NLKj9IGNM1Fxua8zyA.XhbzMRxJ7Vy6yXmeFEC.x7hEKxZzb6C', 'Admin', 'User', 'admin');

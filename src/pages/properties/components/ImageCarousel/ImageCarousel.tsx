@@ -3,6 +3,7 @@ import { Tab } from '@headlessui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronLeft, FaChevronRight, FaPause, FaPlay, FaCamera, FaHome, FaTree, FaExpand, FaTimes } from 'react-icons/fa';
 import { PropertyImage } from '../../../../types/property';
+import { formatImageUrl, getPlaceholderForType } from '../../../../utils/imageUtils';
 
 interface ImageCarouselProps {
   images: PropertyImage[];
@@ -48,8 +49,8 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
   const activeImages = imageCategories[selectedCategory].images;
 
   const getImageUrl = (image: PropertyImage | undefined): string => {
-    if (!image) return '';
-    return image.image_url;
+    if (!image) return getPlaceholderForType('property');
+    return formatImageUrl(image.image_url);
   };
 
   useEffect(() => {
@@ -130,6 +131,13 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0.8 }}
               transition={{ duration: 0.5 }}
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                if (!target.src.includes('placeholder')) {
+                  target.src = getPlaceholderForType(activeImages[currentImageIndex]?.image_type || 'property');
+                  target.onerror = null;
+                }
+              }}
             />
           </AnimatePresence>
           
@@ -292,6 +300,13 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
                     className={`object-cover w-full h-full transition-all duration-300
                       ${currentImageIndex !== index ? 'filter grayscale-[30%] hover:grayscale-0' : ''}
                     `}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      if (!target.src.includes('placeholder')) {
+                        target.src = getPlaceholderForType(image.image_type || 'property');
+                        target.onerror = null;
+                      }
+                    }}
                   />
                 </motion.button>
               ))}
@@ -314,7 +329,4 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
 };
 
 export default ImageCarousel;
-function toggleFullscreen(event: React.MouseEvent<HTMLButtonElement>): void {
-  throw new Error('Function not implemented.');
-}
 

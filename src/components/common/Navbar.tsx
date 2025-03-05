@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUser, FaHeart, FaBars, FaTimes, FaSignOutAlt, FaSearch } from 'react-icons/fa';
+import { FaUser, FaHeart, FaBars, FaTimes, FaSignOutAlt, FaShieldAlt } from 'react-icons/fa';
 
 const Navbar: React.FC = () => {
-  const { user, logout } = useAuth();
+  
+  const { user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -104,6 +105,9 @@ const Navbar: React.FC = () => {
                     {user.username?.[0].toUpperCase() || <FaUser />}
                   </span>
                   <span>{user.username}</span>
+                  {isAdmin() && (
+                    <span className="ml-1 bg-custom-terra text-white text-xs px-1.5 py-0.5 rounded-full">Admin</span>
+                  )}
                 </motion.button>
                 
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg overflow-hidden origin-top-right opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 scale-95 group-hover:scale-100">
@@ -116,6 +120,15 @@ const Navbar: React.FC = () => {
                       <FaHeart className="mr-2 text-custom-terra" />
                       Favorites
                     </Link>
+                    
+                    {/* Admin Dashboard Link - Only shown for admins */}
+                    {isAdmin() && (
+                      <Link to="/admin/dashboard" className="flex items-center px-4 py-2 text-custom-dark hover:bg-custom-cream rounded-md">
+                        <FaShieldAlt className="mr-2 text-custom-terra" />
+                        Admin Dashboard
+                      </Link>
+                    )}
+                    
                     <hr className="my-2 border-custom-cream" />
                     <button 
                       onClick={handleLogout}
@@ -218,6 +231,17 @@ const Navbar: React.FC = () => {
                   >
                     Logout
                   </button>
+                  {isAdmin() && (
+                    <Link 
+                      to="/admin/dashboard" 
+                      className="block px-3 py-2 rounded-md text-custom-dark hover:bg-custom-cream/50 mt-2"
+                    >
+                      <div className="flex items-center">
+                        <FaShieldAlt className="mr-2" />
+                        Admin Dashboard
+                      </div>
+                    </Link>
+                  )}
                 </>
               ) : (
                 <div className="border-t border-gray-200 mt-2 pt-2 flex flex-col space-y-1">

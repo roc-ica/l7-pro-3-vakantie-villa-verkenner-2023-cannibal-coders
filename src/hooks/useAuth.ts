@@ -5,6 +5,7 @@ interface User {
   email: string;
   username: string;
   created_at: string;
+  role: string;
 }
 
 interface LoginCredentials {
@@ -22,9 +23,11 @@ interface AuthContextType {
   user: User | null;
   login: (credentials: LoginCredentials) => Promise<User>;
   register: (credentials: RegisterCredentials) => Promise<User>;
+  isAdmin: () => boolean;
   logout: () => void;
   loading: boolean;
   error: string | null;
+  role: string;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -116,7 +119,9 @@ const useAuthProvider = (): AuthContextType => {
     localStorage.removeItem('user');
   };
 
-  return { user, login, logout, register, loading, error };
+  const role = user?.role || '';
+  const isAdmin = () => user?.role === 'admin';
+  return { user, login, logout, register, loading, error, role, isAdmin };
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {

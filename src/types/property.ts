@@ -44,6 +44,7 @@ export interface PropertyFilter {
   capacity?: number;
   amenities?: string[];
   propertyType?: string;
+  status?: PropertyStatus;
 }
 
 export interface PropertyListProps {

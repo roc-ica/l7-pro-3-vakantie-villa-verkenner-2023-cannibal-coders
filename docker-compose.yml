@@ -25,13 +25,23 @@ services:
   php:
     build: ./server
     container_name: vakantie_vila_php
+    restart: always
     ports:
       - "8000:80"
     volumes:
       - ./server:/var/www/html
+      - ./uploads:/var/www/html/uploads
     depends_on:
       db:
         condition: service_healthy
+    command: >
+      bash -c "
+        mkdir -p /var/www/html/uploads/properties && 
+        chmod -R 777 /var/www/html/uploads && 
+        chmod -R 777 /var/www/html/uploads/properties && 
+        ls -la /var/www/html/uploads && 
+        apache2-foreground
+      "
 
 volumes:
   mysql_data:

@@ -8,6 +8,7 @@ import { formatPrice, formatDate } from '../../utils/formatters';
 import ImageCarousel from './components/ImageCarousel/ImageCarousel';
 import PropertyMap from './components/map/PropertyMap';
 import { generatePropertyPDF } from '../../components/pdf/PropertyPDFGenerator';
+import { formatImageUrl, getPlaceholderForType } from '../../utils/imageUtils';
 
 interface AmenityItem {
   id: string;
@@ -138,9 +139,16 @@ const PropertyDetailsPage: React.FC = () => {
         {/* Background Image */}
         <div className="absolute inset-0">
           <img 
-            src={property.image_url || ''}
-            alt={property.name || 'Property'}
+            src={formatImageUrl(property.image_url)} 
+            alt={property.name}
             className="w-full h-full object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              if (!target.src.includes('placeholder')) {
+                target.src = getPlaceholderForType('property');
+                target.onerror = null;
+              }
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-custom-dark/90 via-custom-dark/40 to-transparent" />
         </div>

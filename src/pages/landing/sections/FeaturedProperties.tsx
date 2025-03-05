@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaMapMarkerAlt, FaStar, FaBed, FaBath, FaHeart, FaFilter, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { formatImageUrl, getPlaceholderForType } from '../../../utils/imageUtils';
 
 interface Property {
   id: number;
@@ -50,13 +51,23 @@ const PropertyCard: React.FC<{ property: Property; index: number }> = ({ propert
             <AnimatePresence mode='wait'>
               <motion.img 
                 key={currentImageIndex}
-                src={property.images[currentImageIndex]} 
+                src={formatImageUrl(property.images[currentImageIndex])}
                 alt={`${property.title} - View ${currentImageIndex + 1}`}
                 className="w-full h-full object-cover"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
+                onError={(e) => {
+                  // Set fallback image if loading fails
+                  const target = e.target as HTMLImageElement;
+                  if (!target.src.includes('placeholder')) {
+                    target.src = getPlaceholderForType('property');
+                    
+                    // Prevent infinite loading attempts by marking this image as already failed
+                    target.onerror = null;
+                  }
+                }}
               />
             </AnimatePresence>
 

@@ -1,6 +1,6 @@
 import { Property, PropertyFilter } from '../types/property';
 
-const API_URL = 'http://localhost:8000/api'; // Updated to match server structure
+const API_URL = 'http://localhost:8000/api'; // Should match your Docker setup
 
 const buildQueryString = (filters: PropertyFilter): string => {
   const params = new URLSearchParams();
@@ -36,14 +36,7 @@ export const propertyService = {
       const queryString = buildQueryString(filters);
       const url = `${API_URL}/properties.php${queryString ? `?${queryString}` : ''}`;
       
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        mode: 'cors'
-      });
+      const response = await fetch(url);
       const data = await response.json();
       
       if (!response.ok) {
@@ -65,25 +58,95 @@ export const propertyService = {
   async getPropertyById(id: number): Promise<Property> {
     try {
       const response = await fetch(`${API_URL}/property.php?id=${id}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch property');
-      }
-      
       const data = await response.json();
       
-      if (data.status === 'error') {
-        throw new Error(data.message);
+      if (!response.ok || data.status === 'error') {
+        throw new Error(data.message || 'Failed to fetch property');
       }
       
-      if (!data.property) {
-        throw new Error('Property data is missing');
-      }
-
-      // Return the property data directly
       return data.property;
       
     } catch (error) {
       console.error('Error fetching property:', error);
+      throw error;
+    }
+  },
+  
+  async createProperty(formData: FormData): Promise<Property> {
+    try {
+      console.log("Submitting form data...");
+      
+      // For debugging: log form data contents
+      formData.forEach((value, key) => {
+        console.log(`${key}: ${value instanceof File ? value.name : value}`);
+      });
+
+      const response = await fetch(`${API_URL}/properties/create.php`, {
+        method: 'POST',
+        body: formData,
+        // Don't set Content-Type - browser will set it with the correct boundary
+      });
+      
+      const data = await response.json();
+      console.log("API Response:", data);
+      
+      if (!response.ok || data.status === 'error') {
+        throw new Error(data.message || 'Failed to create property');
+      }
+      
+      return data.property;
+    } catch (error) {
+      console.error('Error creating property:', error);
+      throw error;
+    }
+  },
+  
+  async updateProperty(id: number, formData: FormData): Promise<Property> {
+    try {
+      console.log(`Updating property ${id}...`);
+      
+      // For debugging: log form data contents
+      formData.forEach((value, key) => {
+        console.log(`${key}: ${value instanceof File ? value.name : value}`);
+      });
+
+      const response = await fetch(`${API_URL}/properties/update.php?id=${id}`, {
+        method: 'POST',
+        body: formData,
+      });
+      
+      const data = await response.json();
+      console.log("API Response:", data);
+      
+      if (!response.ok || data.status === 'error') {
+        throw new Error(data.message || 'Failed to update property');
+      }
+      
+      return data.property;
+    } catch (error) {
+      console.error('Error updating property:', error);
+      throw error;
+    }
+  },
+  
+  async deleteProperty(id: number): Promise<void> {
+    try {
+      console.log(`Deleting property ${id}...`);
+      
+      const response = await fetch(`${API_URL}/properties/delete.php?id=${id}`, {
+        method: 'DELETE',
+      });
+      
+      const data = await response.json();
+      console.log("API Response:", data);
+      
+      if (!response.ok || data.status === 'error') {
+        throw new Error(data.message || 'Failed to delete property');
+      }
+
+      return;
+    } catch (error) {
+      console.error('Error deleting property:', error);
       throw error;
     }
   }

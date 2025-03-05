@@ -1,17 +1,52 @@
 import { PropertyStatus, PropertyType } from '../types/property';
 
+/**
+ * Format a price value with proper currency symbol
+ */
 export const formatPrice = (price: number): string => {
-  return new Intl.NumberFormat('nl-NL', {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0,
+    currency: 'USD',
+    maximumFractionDigits: 0
   }).format(price);
 };
 
-export const formatDate = (date: string): string => {
-  return new Date(date).toLocaleDateString('nl-NL', {
+/**
+ * Format a date in a user-friendly way
+ */
+export const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  
+  // Check if the date is valid
+  if (isNaN(date.getTime())) {
+    return 'Invalid date';
+  }
+  
+  // If it's today, show only the time
+  const today = new Date();
+  if (
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear()
+  ) {
+    return `Today, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  }
+  
+  // If it's yesterday, show "Yesterday"
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  if (
+    date.getDate() === yesterday.getDate() &&
+    date.getMonth() === yesterday.getMonth() &&
+    date.getFullYear() === yesterday.getFullYear()
+  ) {
+    return `Yesterday, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  }
+  
+  // Otherwise, show the full date
+  return date.toLocaleDateString('en-US', {
     year: 'numeric',
-    month: 'long',
+    month: 'short',
     day: 'numeric'
   });
 };

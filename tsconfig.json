@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2015",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -13,9 +13,10 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": false,
+    "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["node", "react", "react-dom", "leaflet"]
+    "types": ["node", "react", "react-dom", "leaflet"],
+    "downlevelIteration": true  // Add this line to fix FormData.entries() iteration
   },
   "include": ["src"]
 }
