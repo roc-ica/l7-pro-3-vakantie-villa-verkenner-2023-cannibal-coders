@@ -53,4 +53,52 @@ CREATE TABLE IF NOT EXISTS hero_images (
 
 -- Admin user
 INSERT INTO users (username, email, password, first_name, last_name, role) VALUES
-('admin', 'admin@example.com', '$2y$10$uM6NLKj9IGNM1Fxua8zyA.XhbzMRxJ7Vy6yXmeFEC.x7hEKxZzb6C', 'Admin', 'User', 'admin');
+    url VARCHAR(255) NOT NULL,
+    location VARCHAR(100) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create bookings table with CASCADE delete
+CREATE TABLE IF NOT EXISTS bookings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    property_id INT NOT NULL,
+    user_id INT NOT NULL,
+    check_in_date DATE NOT NULL,
+    check_out_date DATE NOT NULL,
+    guests INT NOT NULL,
+    total_price DECIMAL(10,2) NOT NULL,
+    status ENUM('pending', 'confirmed', 'cancelled') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Create favorites table with CASCADE delete
+CREATE TABLE IF NOT EXISTS favorites (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    property_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY (user_id, property_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE
+);
+
+-- Create default admin and user accounts
+-- Password for both accounts is 'password123'
+INSERT INTO users (username, email, password, first_name, last_name, role, created_at) VALUES
+('admin', 'admin@example.com', '$2y$10$uM6NLKj9IGNM1Fxua8zyA.XhbzMRxJ7Vy6yXmeFEC.x7hEKxZzb6C', 'Admin', 'User', 'admin', NOW()),
+('user', 'user@example.com', '$2y$10$1LKZ9VLdHCjHdq1xHrPuPeh8kB1sFe7eHpWkW4BDfwxEvBRqPwAJO', 'Regular', 'User', 'user', NOW());
+
+-- Add sample hero images
+INSERT INTO hero_images (url, location) VALUES
+('https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9', 'Luxury Villa, Bali'),
+('https://images.unsplash.com/photo-1499793983690-e29da59ef1c2', 'Mountain Retreat, Norway'),
+('https://images.unsplash.com/photo-1470770841072-f978cf4d019e', 'Lakeside Cabin, Canada');
+
+-- Add this at the end of your database.sql file to verify data
+SELECT 'Verifying database setup...' as '';
+SELECT COUNT(*) as property_count FROM properties;
+SELECT COUNT(*) as image_count FROM property_images;
