@@ -1,12 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { FaBed, FaUsers, FaMapMarkerAlt, FaEuroSign } from 'react-icons/fa';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaBed, FaUsers, FaMapMarkerAlt, FaDollarSign, FaCheck, FaArrowLeft, FaCalendar, FaRegHeart, FaHeart, FaFilePdf, FaDownload } from 'react-icons/fa';
 import { Property } from '../../types/property';
 import { propertyService } from '../../services/api';
-import { amenities } from '../../data/amenities';
-import PropertyMap from './components/map/PropertyMap';
+import { formatPrice, formatDate } from '../../utils/formatters';
 import ImageCarousel from './components/ImageCarousel/ImageCarousel';
-import { formatPrice } from '../../utils/formatters';
+import PropertyMap from './components/map/PropertyMap';
+import { generatePropertyPDF } from '../../components/pdf/PropertyPDFGenerator';
+
+interface AmenityItem {
+  id: string;
+  name: string;
+  icon: React.ComponentType;
+}
+
+const amenitiesWithIcons: AmenityItem[] = [
+  { id: 'wifi', name: 'WiFi', icon: FaCheck },
+  { id: 'parking', name: 'Free Parking', icon: FaCheck },
+  { id: 'pool', name: 'Swimming Pool', icon: FaCheck },
+  { id: 'ac', name: 'Air Conditioning', icon: FaCheck },
+  { id: 'kitchen', name: 'Kitchen', icon: FaCheck },
+  { id: 'pets', name: 'Pets Allowed', icon: FaCheck }
+];
 
 const PropertyDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +32,7 @@ const PropertyDetailsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'details' | 'location' | 'reviews'>('details');
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -54,9 +71,17 @@ const PropertyDetailsPage: React.FC = () => {
     // Add logic to save to user's favorites
   };
 
-  const handleGeneratePDF = () => {
-    if (property) {
-      generatePropertyPDF(property);
+  const handleDownloadPDF = async () => {
+    if (!property) return;
+    
+    try {
+      setIsGeneratingPDF(true);
+      await generatePropertyPDF(property);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      // You could add a toast notification here about the error
+    } finally {
+      setIsGeneratingPDF(false);
     }
   };
 
@@ -123,13 +148,40 @@ const PropertyDetailsPage: React.FC = () => {
         {/* Header Content */}
         <div className="absolute inset-0 flex flex-col justify-end">
           <div className="container mx-auto px-4 pb-12">
-            {/* Back Button */}
-            <Link 
-              to="/properties"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm text-white transition-colors hover:bg-white/20 mb-8"
-            >
-              <FaArrowLeft /> Back to Properties
-            </Link>
+            {/* Top navigation and actions */}
+            <div className="flex justify-between items-center mb-8">
+              <Link 
+                to="/properties"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm text-white transition-colors hover:bg-white/20"
+              >
+                <FaArrowLeft /> Back to Properties
+              </Link>
+              
+              <motion.button
+                onClick={handleDownloadPDF}
+                disabled={isGeneratingPDF}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm text-white transition-colors hover:bg-white/20 disabled:opacity-50"
+              >
+                {isGeneratingPDF ? (
+                  <>
+                    <motion.div 
+                      animate={{ rotate: 360 }} 
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      className="w-4 h-4"
+                    >
+                      <FaDownload />
+                    </motion.div>
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <FaFilePdf /> Download PDF
+                  </>
+                )}
+              </motion.button>
+            </div>
             
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -335,18 +387,48 @@ const PropertyDetailsPage: React.FC = () => {
 
           {/* Right Column: Booking Card */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm p-6 sticky top-6">
-              <div className="text-center space-y-6">
-                <p className="text-4xl font-bold text-blue-600">
-                  {formatPrice(property.price)}
-                </p>
-                <div className="space-y-3">
-                  <button className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl active:scale-[0.99]">
-                    Contact Agent
-                  </button>
-                  <button className="w-full border-2 border-blue-600 text-blue-600 py-3 px-6 rounded-lg hover:bg-blue-50 transition-all">
-                    Save Property
-                  </button>
+            <motion.div 
+              className="bg-white rounded-xl shadow-lg overflow-hidden sticky top-24"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              {/* Price Header */}
+              <div className="bg-gradient-to-r from-custom-sage to-custom-terra p-6 text-white">
+                <div className="text-center">
+                  <p className="text-sm uppercase tracking-wider mb-1">From</p>
+                  <p className="text-3xl font-bold">{formattedPrice}</p>
+                  <p className="text-sm opacity-80">per night</p>
+                </div>
+              </div>
+
+              {/* Booking Form */}
+              <div className="p-6">
+                <div className="mb-4">
+                  <label className="block text-custom-charcoal text-sm mb-2">Check-in Date</label>
+                  <input 
+                    type="date"
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-terra/30 focus:border-custom-terra"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-custom-charcoal text-sm mb-2">Check-out Date</label>
+                  <input 
+                    type="date"
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-terra/30 focus:border-custom-terra"
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-custom-charcoal text-sm mb-2">Guests</label>
+                  <select 
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-terra/30 focus:border-custom-terra appearance-none"
+                  >
+                    {[1, 2, 3, 4, 5, 6].map(num => (
+                      <option key={num} value={num}>{num} Guest{num !== 1 ? 's' : ''}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <motion.button
@@ -357,20 +439,47 @@ const PropertyDetailsPage: React.FC = () => {
                   Book Now
                 </motion.button>
 
-                <button 
-                  onClick={toggleFavorite}
-                  className="w-full py-3 border border-custom-terra text-custom-terra rounded-lg font-medium hover:bg-custom-cream/30 transition-colors flex items-center justify-center gap-2"
-                >
-                  {isFavorite ? (
-                    <>
-                      <FaHeart /> Saved to Favorites
-                    </>
-                  ) : (
-                    <>
-                      <FaRegHeart /> Save to Favorites
-                    </>
-                  )}
-                </button>
+                <div className="flex gap-2 mb-3">
+                  <button 
+                    onClick={toggleFavorite}
+                    className="flex-1 py-3 border border-custom-terra text-custom-terra rounded-lg font-medium hover:bg-custom-cream/30 transition-colors flex items-center justify-center gap-2"
+                  >
+                    {isFavorite ? (
+                      <>
+                        <FaHeart /> Saved
+                      </>
+                    ) : (
+                      <>
+                        <FaRegHeart /> Save
+                      </>
+                    )}
+                  </button>
+                  
+                  <motion.button 
+                    onClick={handleDownloadPDF}
+                    disabled={isGeneratingPDF}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="flex-1 py-3 border border-custom-sage text-custom-sage rounded-lg font-medium hover:bg-custom-sage/10 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {isGeneratingPDF ? (
+                      <>
+                        <motion.div 
+                          animate={{ rotate: 360 }} 
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          className="w-4 h-4"
+                        >
+                          <FaDownload />
+                        </motion.div>
+                        PDF...
+                      </>
+                    ) : (
+                      <>
+                        <FaFilePdf /> Download PDF
+                      </>
+                    )}
+                  </motion.button>
+                </div>
               </div>
 
               {/* Property Details */}
@@ -379,9 +488,9 @@ const PropertyDetailsPage: React.FC = () => {
                 <ul className="space-y-3 text-custom-charcoal">
                   {[
                     { label: 'Property ID', value: property.id },
-                    { label: 'Type', value: 'Villa' },
+                    { label: 'Type', value: property.property_type || 'Villa' },
                     { label: 'Year Built', value: '2020' },
-                    { label: 'Last Updated', value: formatDate(property.created_at) }
+                    { label: 'Last Updated', value: formatDate(property.updated_at || property.created_at) }
                   ].map((detail, index) => (
                     <li key={index} className="flex justify-between">
                       <span className="text-custom-charcoal/70">{detail.label}</span>

@@ -27,6 +27,7 @@ export interface Property {
   image_url: string;
   status: PropertyStatus;
   property_type: PropertyType;
+  updated_at?: string;
 }
 
 export interface PropertyFilter {
