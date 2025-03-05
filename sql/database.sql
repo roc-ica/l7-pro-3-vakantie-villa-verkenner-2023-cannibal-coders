@@ -48,12 +48,6 @@ CREATE TABLE IF NOT EXISTS property_images (
 CREATE TABLE IF NOT EXISTS hero_images (
     id INT AUTO_INCREMENT PRIMARY KEY,
     url VARCHAR(255) NOT NULL,
-    location VARCHAR(100) NOT NULL
-);
-
--- Admin user
-INSERT INTO users (username, email, password, first_name, last_name, role) VALUES
-    url VARCHAR(255) NOT NULL,
     location VARCHAR(100) NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
