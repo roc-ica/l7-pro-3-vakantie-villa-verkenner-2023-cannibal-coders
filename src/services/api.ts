@@ -88,3 +88,25 @@ export const propertyService = {
     }
   }
 };
+
+export const heroService = {
+  getHeroData: async () => {
+    try {
+      const response = await fetch(`${API_URL}/hero-images.php`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      console.error('Error fetching hero data:', error);
+      // Fallback data in case of error
+      return {
+        heroImages: [
+          { url: '/default-hero.jpg', location: 'Australia' }
+        ],
+        popularLocations: ['Sydney', 'Melbourne', 'Brisbane']
+      };
+    }
+  }
+};

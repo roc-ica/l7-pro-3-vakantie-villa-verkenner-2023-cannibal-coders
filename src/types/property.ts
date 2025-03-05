@@ -1,7 +1,7 @@
 export interface PropertyImage {
   id: number;
   image_url: string;
-  image_type: 'interior' | 'exterior' | 'surroundings';
+  image_type: string;
   description: string;
 }
 
@@ -22,6 +22,8 @@ export interface Property {
   images: PropertyImage[];
   title: string;
   bedrooms: number;
+  bathrooms: number;
+  rating?: number;
   image_url: string;
   status: PropertyStatus;
   property_type: PropertyType;
@@ -35,6 +37,15 @@ export interface PropertyFilter {
   country?: string;
   minBedrooms?: number;
   minCapacity?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  rating?: number;
+  capacity?: number;
   amenities?: string[];
   propertyType?: string;
+}
+
+export interface PropertyListProps {
+  properties: Property[];
+  view: 'grid' | 'map';
 }

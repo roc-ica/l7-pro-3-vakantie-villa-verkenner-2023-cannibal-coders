@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Tab } from '@headlessui/react';
-import { FaChevronLeft, FaChevronRight, FaPause, FaPlay } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaChevronLeft, FaChevronRight, FaPause, FaPlay, FaCamera, FaHome, FaTree, FaExpand, FaTimes } from 'react-icons/fa';
 import { PropertyImage } from '../../../../types/property';
 
 interface ImageCarouselProps {
@@ -9,16 +10,42 @@ interface ImageCarouselProps {
 
 const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  type CategoryKey = 'all' | 'interior' | 'exterior' | 'surroundings';
+  const [selectedCategory, setSelectedCategory] = useState<CategoryKey>('all');
   const autoPlayInterval = useRef<NodeJS.Timeout | null>(null);
 
   const imageCategories = {
-    all: images || [],
-    interior: images?.filter(img => img.image_type === 'interior') || [],
-    exterior: images?.filter(img => img.image_type === 'exterior') || [],
-    surroundings: images?.filter(img => img.image_type === 'surroundings') || [],
+    all: { 
+      name: 'All Photos', 
+      icon: FaCamera, 
+      images: images || [] 
+    },
+    interior: { 
+      name: 'Interior', 
+      icon: FaHome, 
+      images: images?.filter(img => img.image_type === 'interior') || [] 
+    },
+    exterior: { 
+      name: 'Exterior', 
+      icon: FaHome, 
+      images: images?.filter(img => img.image_type === 'exterior') || [] 
+    },
+    surroundings: { 
+      name: 'Surroundings', 
+      icon: FaTree, 
+      images: images?.filter(img => img.image_type === 'surroundings') || [] 
+    },
   };
+
+  // Filter categories with no images
+  const availableCategories: typeof imageCategories = Object.entries(imageCategories)
+    .filter(([_, { images }]) => images.length > 0)
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as typeof imageCategories);
+
+  const activeImages = imageCategories[selectedCategory].images;
 
   const getImageUrl = (image: PropertyImage | undefined): string => {
     if (!image) return '';
@@ -31,14 +58,13 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
         clearInterval(autoPlayInterval.current);
       }
 
-      if (isAutoPlaying && !isPaused && images?.length) {
+      if (isAutoPlaying && !isPaused && activeImages?.length > 1) {
         autoPlayInterval.current = setInterval(() => {
           setCurrentImageIndex((prev) => {
             const nextIndex = prev + 1;
-            const currentImages = imageCategories.all;
-            return nextIndex >= currentImages.length ? 0 : nextIndex;
+            return nextIndex >= activeImages.length ? 0 : nextIndex;
           });
-        }, 3000);
+        }, 3500);
       }
     };
 
@@ -49,7 +75,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
         clearInterval(autoPlayInterval.current);
       }
     };
-  }, [isAutoPlaying, isPaused, images, imageCategories.all]);
+  }, [isAutoPlaying, isPaused, activeImages]);
 
   const handleImageClick = () => {
     setIsPaused(!isPaused);
@@ -60,150 +86,235 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
     setIsPaused(false);
   };
 
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category as CategoryKey);
+    setCurrentImageIndex(0); // Reset the image index when changing categories
+  };
+
+  if (!images || images.length === 0) {
+    return (
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden h-[400px] flex items-center justify-center">
+        <div className="text-center p-8">
+          <div className="bg-custom-cream/20 rounded-full p-6 inline-flex mb-4">
+            <FaCamera className="text-4xl text-custom-terra/50" />
+          </div>
+          <h3 className="text-xl font-medium text-custom-dark mb-2">No Images Available</h3>
+          <p className="text-custom-charcoal">This property doesn't have any photos yet.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-      <Tab.Group>
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-4">
-            <Tab.List className="flex space-x-2">
-              {Object.entries(imageCategories).map(([category, images]) => (
-                <Tab
-                  key={category}
-                  disabled={!images || images.length === 0}
-                  className={({ selected }) =>
-                    `px-4 py-2 rounded-lg text-sm font-medium transition-all
-                    ${selected 
-                      ? 'bg-blue-600 text-white shadow-md' 
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }
-                    ${(!images || images.length === 0) ? 'opacity-50 cursor-not-allowed' : ''}`
-                  }
+    <div className={`
+      bg-white rounded-xl shadow-lg overflow-hidden
+      ${isFullscreen ? 'fixed inset-0 z-50 rounded-none' : ''}
+    `}>
+      <div className="relative">
+        {/* Main image display */}
+        <div 
+          className={`relative overflow-hidden cursor-pointer ${isFullscreen ? 'h-screen' : 'h-[500px]'}`}
+          onClick={handleImageClick}
+        >
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentImageIndex}
+              src={getImageUrl(activeImages[currentImageIndex])}
+              alt={activeImages[currentImageIndex]?.description || 'Property image'}
+              className="object-cover w-full h-full"
+              initial={{ opacity: 0.8, scale: 1.05 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0.8 }}
+              transition={{ duration: 0.5 }}
+            />
+          </AnimatePresence>
+          
+          {/* Overlay with image navigation buttons */}
+          <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300">
+            {/* Top controls */}
+            <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center bg-gradient-to-b from-black/60 to-transparent">
+              <div className="text-white">
+                <span className="font-medium">{currentImageIndex + 1}</span>
+                <span className="text-white/80"> / {activeImages.length}</span>
+              </div>
+              
+              <div className="flex gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleAutoPlay();
+                  }}
+                  className="bg-black/30 backdrop-blur-sm hover:bg-black/50 rounded-full p-2 text-white transition-colors"
                 >
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
-                  {images && images.length > 0 && (
-                    <span className="ml-2 px-2 py-0.5 bg-white/20 rounded-full text-xs">
-                      {images.length}
-                    </span>
-                  )}
-                </Tab>
-              ))}
-            </Tab.List>
+                  {isAutoPlaying ? <FaPause /> : <FaPlay />}
+                </button>
+                
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFullscreen();
+                  }}
+                  className="bg-black/30 backdrop-blur-sm hover:bg-black/50 rounded-full p-2 text-white transition-colors"
+                >
+                  <FaExpand />
+                </button>
+              </div>
+            </div>
             
-            <button
-              onClick={toggleAutoPlay}
-              className="flex items-center px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-all"
-            >
-              {isAutoPlaying ? (
-                <>
-                  <FaPause className="mr-2" />
-                  Stop Slideshow
-                </>
-              ) : (
-                <>
-                  <FaPlay className="mr-2" />
-                  Start Slideshow
-                </>
-              )}
-            </button>
+            {/* Caption */}
+            {activeImages[currentImageIndex]?.description && (
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
+                <p className="text-white text-sm">{activeImages[currentImageIndex].description}</p>
+              </div>
+            )}
+            
+            {/* Left/Right navigation */}
+            {activeImages.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex((prev) => 
+                      prev === 0 ? activeImages.length - 1 : prev - 1
+                    );
+                    setIsPaused(true);
+                  }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 backdrop-blur-sm hover:bg-black/50 text-white rounded-full p-3 transition-colors"
+                >
+                  <FaChevronLeft />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex((prev) => 
+                      prev === activeImages.length - 1 ? 0 : prev + 1
+                    );
+                    setIsPaused(true);
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 backdrop-blur-sm hover:bg-black/50 text-white rounded-full p-3 transition-colors"
+                >
+                  <FaChevronRight />
+                </button>
+              </>
+            )}
+          </div>
+          
+          {/* Pause indicator */}
+          <AnimatePresence>
+            {isPaused && isAutoPlaying && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <div className="bg-black/30 backdrop-blur-sm rounded-full p-5">
+                  <FaPause className="text-3xl text-white/90" />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          
+          {/* Bottom dots for navigation */}
+          <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+            <div className="flex space-x-2 px-3 py-1.5 bg-black/30 backdrop-blur-sm rounded-full">
+              {activeImages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex(index);
+                    setIsPaused(true);
+                  }}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    index === currentImageIndex 
+                      ? 'w-6 bg-custom-terra' 
+                      : 'w-2 bg-white/50 hover:bg-white/70'
+                  }`}
+                  aria-label={`Go to image ${index + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
 
-        <Tab.Panels>
-          {Object.values(imageCategories).map((images, idx) => (
-            <Tab.Panel key={idx} className="focus:outline-none">
-              <div className="relative">
-                <div 
-                  className="overflow-hidden rounded-lg aspect-w-16 aspect-h-9 cursor-pointer"
-                  onClick={handleImageClick}
-                >
-                  {images.length > 0 ? (
-                    <>
-                      <img
-                        src={getImageUrl(images[currentImageIndex])}
-                        alt={images[currentImageIndex]?.description || 'Property image'}
-                        className="object-cover w-full h-full"
-                      />
-                      <div className="absolute bottom-0 left-0 right-0 flex justify-center p-4 bg-gradient-to-t from-black/50 to-transparent">
-                        <div className="flex space-x-2">
-                          {images.map((_, index) => (
-                            <div
-                              key={index}
-                              className={`h-1.5 rounded-full transition-all duration-300 ${
-                                index === currentImageIndex 
-                                  ? 'w-6 bg-white' 
-                                  : 'w-1.5 bg-white/50'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      {isPaused && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                          <div className="bg-white/90 rounded-full p-4">
-                            <FaPause className="text-2xl text-blue-600" />
-                          </div>
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <div className="flex items-center justify-center h-full bg-gray-100">
-                      <p className="text-gray-500">No images available</p>
-                    </div>
-                  )}
-                </div>
-                {images.length > 1 && (
-                  <>
-                    <button
-                      onClick={() => setCurrentImageIndex((prev) => 
-                        prev === 0 ? images.length - 1 : prev - 1
-                      )}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-2 hover:bg-white"
-                    >
-                      <FaChevronLeft className="text-gray-800" />
-                    </button>
-                    <button
-                      onClick={() => setCurrentImageIndex((prev) => 
-                        prev === images.length - 1 ? 0 : prev + 1
-                      )}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-2 hover:bg-white"
-                    >
-                      <FaChevronRight className="text-gray-800" />
-                    </button>
-                  </>
-                )}
-              </div>
-
-              <div className="grid grid-cols-6 gap-2 p-4">
-                {images.map((image, index) => (
+        {!isFullscreen && (
+          <div className="p-4 border-t border-gray-100">
+            {/* Category Navigation */}
+            <div className="mb-4 overflow-x-auto">
+              <div className="flex space-x-2">
+                {Object.entries(availableCategories).map(([category, { name, icon: Icon }]) => (
                   <button
-                    key={image.id}
-                    onClick={() => {
-                      setCurrentImageIndex(index);
-                      setIsPaused(true);
-                    }}
-                    className={`
-                      relative aspect-w-1 aspect-h-1 rounded-lg overflow-hidden
-                      transition-all duration-300
-                      ${currentImageIndex === index 
-                        ? 'ring-2 ring-blue-600 scale-105 z-10' 
-                        : 'hover:scale-105'
-                      }
-                    `}
+                    key={category}
+                    onClick={() => handleCategoryChange(category)}
+                    className={`flex items-center px-4 py-2 rounded-full text-sm transition-colors
+                    ${selectedCategory === category 
+                        ? 'bg-custom-terra text-white' 
+                        : 'bg-custom-cream/30 text-custom-charcoal hover:bg-custom-cream'
+                      }`}
                   >
-                    <img
-                      src={getImageUrl(image)}
-                      alt={image.description || `Property image ${index + 1}`}
-                      className="object-cover w-full h-full"
-                    />
+                    <Icon className="mr-2" />
+                    {name}
+                    <span className="ml-1.5 bg-white/20 px-1.5 py-0.5 rounded-full text-xs">
+                      {imageCategories[category as CategoryKey].images.length}
+                    </span>
                   </button>
                 ))}
               </div>
-            </Tab.Panel>
-          ))}
-        </Tab.Panels>
-      </Tab.Group>
+            </div>
+
+            {/* Thumbnail strip */}
+            <div className="grid grid-cols-6 gap-2">
+              {activeImages.map((image, index) => (
+                <motion.button
+                  key={image.id || index}
+                  onClick={() => {
+                    setCurrentImageIndex(index);
+                    setIsPaused(true);
+                  }}
+                  whileHover={{ y: -3, scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className={`
+                    relative aspect-w-1 aspect-h-1 rounded-lg overflow-hidden
+                    ${currentImageIndex === index 
+                      ? 'ring-2 ring-custom-terra shadow-md' 
+                      : 'ring-1 ring-gray-100'
+                    }
+                  `}
+                >
+                  <img
+                    src={getImageUrl(image)}
+                    alt={image.description || `Property image ${index + 1}`}
+                    className={`object-cover w-full h-full transition-all duration-300
+                      ${currentImageIndex !== index ? 'filter grayscale-[30%] hover:grayscale-0' : ''}
+                    `}
+                  />
+                </motion.button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Fullscreen close button */}
+        {isFullscreen && (
+          <button
+            onClick={toggleFullscreen}
+            className="absolute top-4 right-4 bg-black/50 text-white rounded-full p-3 z-10"
+          >
+            <FaTimes />
+          </button>
+        )}
+      </div>
     </div>
   );
 };
 
 export default ImageCarousel;
+function toggleFullscreen(event: React.MouseEvent<HTMLButtonElement>): void {
+  throw new Error('Function not implemented.');
+}
+

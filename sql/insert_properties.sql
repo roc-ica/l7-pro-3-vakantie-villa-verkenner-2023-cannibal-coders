@@ -14,6 +14,12 @@ INSERT INTO property_images (property_id, image_url, image_type, description) VA
 (1, 'https://images.unsplash.com/photo-1601922046210-99885dd0910f', 'exterior', 'Front View'),
 (1, 'https://images.unsplash.com/photo-1601922046210-99885dd0910f', 'surroundings', 'Fjord View');
 
+-- Insert sample hero images
+INSERT INTO hero_images (url, location) VALUES
+    ('https://images.unsplash.com/photo-1507525428034-b723cf961d3e', 'Bondi Beach, Sydney'),
+    ('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0', 'Great Barrier Reef'),
+    ('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0', 'Gold Coast');
+
 -- Marokko properties
 INSERT INTO properties (name, location, country, address, capacity, bedrooms, price, description, amenities, image_url) VALUES
 ('Atlas Oasis Villa', 'Marrakech', 'Marokko', 'Palmeraie Road, Marrakech', 8, 4, 110000, 'Traditionele villa met uitzicht op het Atlasgebergte. Zwembad op het park en winkel op het park.', 'wifi,parking,pool,ac', 'https://images.unsplash.com/photo-1582568741847-0d71f5b77f78'),

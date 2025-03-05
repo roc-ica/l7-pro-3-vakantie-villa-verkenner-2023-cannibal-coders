@@ -24,7 +24,7 @@ const SearchPage: React.FC = () => {
       <h1 className="text-3xl font-bold mb-8">Search Vacation Villas</h1>
       <PropertySearch onSearch={handleSearch} />
       <div className="mt-8">
-        <PropertyList properties={filteredProperties} />
+        <PropertyList properties={filteredProperties} view="grid" />
       </div>
     </div>
   );
