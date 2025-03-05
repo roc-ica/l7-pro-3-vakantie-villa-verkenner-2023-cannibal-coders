@@ -1,28 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import ImageCarousel from './components/ImageCarousel/ImageCarousel';
-import PropertyMap from './components/map/PropertyMap';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaBed, FaUsers, FaMapMarkerAlt, FaDollarSign, FaCheck, FaArrowLeft, FaCalendar, FaRegHeart, FaHeart, FaShare } from 'react-icons/fa';
+import { useParams, useNavigate } from 'react-router-dom';
+import { FaBed, FaUsers, FaMapMarkerAlt, FaEuroSign } from 'react-icons/fa';
 import { Property } from '../../types/property';
 import { propertyService } from '../../services/api';
-import { formatPrice, formatDate } from '../../utils/formatters';
-
-
-interface AmenityItem {
-  id: string;
-  name: string;
-  icon: React.ComponentType;
-}
-
-const amenitiesWithIcons: AmenityItem[] = [
-  { id: 'wifi', name: 'WiFi', icon: FaCheck },
-  { id: 'parking', name: 'Free Parking', icon: FaCheck },
-  { id: 'pool', name: 'Swimming Pool', icon: FaCheck },
-  { id: 'ac', name: 'Air Conditioning', icon: FaCheck },
-  { id: 'kitchen', name: 'Kitchen', icon: FaCheck },
-  { id: 'pets', name: 'Pets Allowed', icon: FaCheck }
-];
+import { amenities } from '../../data/amenities';
+import PropertyMap from './components/map/PropertyMap';
+import ImageCarousel from './components/ImageCarousel/ImageCarousel';
+import { formatPrice } from '../../utils/formatters';
 
 const PropertyDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -68,6 +52,12 @@ const PropertyDetailsPage: React.FC = () => {
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
     // Add logic to save to user's favorites
+  };
+
+  const handleGeneratePDF = () => {
+    if (property) {
+      generatePropertyPDF(property);
+    }
   };
 
   if (loading) {
@@ -345,48 +335,18 @@ const PropertyDetailsPage: React.FC = () => {
 
           {/* Right Column: Booking Card */}
           <div className="lg:col-span-1">
-            <motion.div 
-              className="bg-white rounded-xl shadow-lg overflow-hidden sticky top-24"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              {/* Price Header */}
-              <div className="bg-gradient-to-r from-custom-sage to-custom-terra p-6 text-white">
-                <div className="text-center">
-                  <p className="text-sm uppercase tracking-wider mb-1">From</p>
-                  <p className="text-3xl font-bold">{formattedPrice}</p>
-                  <p className="text-sm opacity-80">per night</p>
-                </div>
-              </div>
-
-              {/* Booking Form */}
-              <div className="p-6">
-                <div className="mb-4">
-                  <label className="block text-custom-charcoal text-sm mb-2">Check-in Date</label>
-                  <input 
-                    type="date"
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-terra/30 focus:border-custom-terra"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-custom-charcoal text-sm mb-2">Check-out Date</label>
-                  <input 
-                    type="date"
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-terra/30 focus:border-custom-terra"
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label className="block text-custom-charcoal text-sm mb-2">Guests</label>
-                  <select 
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-terra/30 focus:border-custom-terra appearance-none"
-                  >
-                    {[1, 2, 3, 4, 5, 6].map(num => (
-                      <option key={num} value={num}>{num} Guest{num !== 1 ? 's' : ''}</option>
-                    ))}
-                  </select>
+            <div className="bg-white rounded-xl shadow-sm p-6 sticky top-6">
+              <div className="text-center space-y-6">
+                <p className="text-4xl font-bold text-blue-600">
+                  {formatPrice(property.price)}
+                </p>
+                <div className="space-y-3">
+                  <button className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl active:scale-[0.99]">
+                    Contact Agent
+                  </button>
+                  <button className="w-full border-2 border-blue-600 text-blue-600 py-3 px-6 rounded-lg hover:bg-blue-50 transition-all">
+                    Save Property
+                  </button>
                 </div>
 
                 <motion.button
