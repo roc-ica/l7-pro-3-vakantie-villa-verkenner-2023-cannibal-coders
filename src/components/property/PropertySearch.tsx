@@ -5,6 +5,7 @@ import { PropertyFilter } from '../../types/property';
 
 interface PropertySearchProps {
   onSearch: (filters: PropertyFilter) => void;
+  initialValues?: { [key: string]: any };
   className?: string;
 }
 

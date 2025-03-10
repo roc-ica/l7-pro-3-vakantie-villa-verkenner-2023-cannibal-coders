@@ -229,7 +229,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({ address, location, country })
             onClick={() => searchNearbyPlaces(type.id)}
             disabled={isSearching}
             className={`
-              flex items-center px-4 py-2 rounded-lg transition-all duration-200
+              flex items-center px-4 py-2 rounded-lg transition-all duration-9200
               ${isSearching && selectedType === type.id ? 'opacity-75 cursor-wait' : ''}
               ${selectedType === type.id
                 ? 'bg-blue-600 text-white shadow-sm'
