@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import PropertyList from '../../components/property/PropertyList';
-import PropertySearch from '../../components/property/PropertySearch';
+import PropertySearch from '../../components/property/search/PropertySearch';
 import { setProperties, setLoading } from './propertySlice';
 import { propertyService } from '../../services/api';
 import { PropertyFilter } from '../../types/property';

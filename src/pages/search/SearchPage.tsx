@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import PropertyList from '../../components/property/PropertyList';
-import PropertySearch from '../../components/property/PropertySearch';
+import PropertySearch from '../../components/property/search/PropertySearch';
 import { setSearchTerm } from './searchSlice';
 import { PropertyFilter } from '../../types/property';
 
