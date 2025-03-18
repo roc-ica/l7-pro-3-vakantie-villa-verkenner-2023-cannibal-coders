@@ -43,38 +43,6 @@ const AdminDashboard: React.FC = () => {
     fetchProperties();
   }, []);
 
-  // Calculate stats based on actual data
-  const stats = [
-    {
-      title: 'Total Properties',
-      value: properties.length,
-      icon: <FaHome className="text-white text-2xl" />,
-      change: 12.5,
-      color: 'from-blue-500 to-blue-600'
-    },
-    {
-      title: 'Active Users',
-      value: 324,
-      icon: <FaUsers className="text-white text-2xl" />,
-      change: 8.2,
-      color: 'from-green-500 to-green-600'
-    },
-    {
-      title: 'Bookings',
-      value: 156,
-      icon: <FaCalendarAlt className="text-white text-2xl" />,
-      change: -3.8,
-      color: 'from-custom-terra to-red-600'
-    },
-    {
-      title: 'Revenue',
-      value: '$45,289',
-      icon: <FaDollarSign className="text-white text-2xl" />,
-      change: 24.3,
-      color: 'from-custom-sage to-green-800'
-    }
-  ];
-
   const recentProperties = properties.slice(0, 5);
   
   const handleDeleteClick = (property: Property) => {
@@ -107,32 +75,6 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <AdminLayout title="Dashboard">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat, index) => (
-          <motion.div
-            key={stat.title}
-            className="bg-white rounded-xl shadow-md overflow-hidden"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.1 }}
-          >
-            <div className="flex items-center">
-              <div className={`w-24 h-24 flex items-center justify-center bg-gradient-to-br ${stat.color}`}>
-                {stat.icon}
-              </div>
-              <div className="p-4 flex-1">
-                <h3 className="text-sm text-gray-500 uppercase font-medium">{stat.title}</h3>
-                <div className="text-2xl font-bold text-custom-dark">{stat.value}</div>
-                <div className={`text-sm ${stat.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {stat.change >= 0 ? '+' : ''}{stat.change}% from last month
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
       {/* Recent Properties */}
       <motion.div
         className="bg-white rounded-xl shadow-md overflow-hidden mb-8"
