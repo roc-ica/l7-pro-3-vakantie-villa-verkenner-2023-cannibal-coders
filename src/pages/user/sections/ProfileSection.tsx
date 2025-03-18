@@ -17,7 +17,6 @@ interface ProfileSectionProps {
   toggleEditing: () => void;
   handleSaveProfile: (e: React.FormEvent) => void;
   mockFavorites: any[];
-  mockBookings: any[];
   mockReviews: any[];
 }
 
@@ -29,7 +28,6 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   toggleEditing,
   handleSaveProfile,
   mockFavorites,
-  mockBookings,
   mockReviews
 }) => {
   return (
@@ -204,39 +202,6 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
             </div>
           )}
         </div>
-      </motion.div>
-      
-      {/* Activity Summary Cards */}
-      <motion.div 
-        className="grid grid-cols-1 md:grid-cols-3 gap-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        {[
-          { label: 'Favorites', icon: FaHeart, count: mockFavorites.length, color: 'from-pink-500 to-red-500' },
-          { label: 'Bookings', icon: FaCalendarAlt, count: mockBookings.length, color: 'from-custom-sage to-custom-terra' },
-          { label: 'Reviews', icon: FaStar, count: mockReviews.length, color: 'from-yellow-400 to-amber-500' }
-        ].map((item) => (
-          <motion.div
-            key={item.label}
-            whileHover={{ y: -4, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
-            className="bg-white rounded-xl shadow-md overflow-hidden"
-          >
-            <div className={`bg-gradient-to-r ${item.color} p-4 flex items-center justify-between`}>
-              <h3 className="text-white font-medium">{item.label}</h3>
-              <item.icon className="text-white opacity-90" />
-            </div>
-            <div className="p-6 text-center">
-              <p className="text-4xl font-bold text-custom-dark mb-1">{item.count}</p>
-              <p className="text-custom-charcoal text-sm">
-                {item.label === 'Favorites' ? 'Saved properties' :
-                 item.label === 'Bookings' ? 'Total reservations' : 
-                 'Submitted reviews'}
-              </p>
-            </div>
-          </motion.div>
-        ))}
       </motion.div>
     </div>
   );

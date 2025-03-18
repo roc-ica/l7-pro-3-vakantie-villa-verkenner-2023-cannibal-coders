@@ -14,12 +14,36 @@ try {
         throw new Exception('Invalid ID');
     }
 
-    $stmt = $pdo->prepare("SELECT * FROM properties WHERE id = ?");
+    // Modified query to join with location_options table
+    $stmt = $pdo->prepare("
+        SELECT p.*, 
+               lo.id AS location_option_id, 
+               lo.name AS location_option_name, 
+               lo.description AS location_option_description
+        FROM properties p
+        LEFT JOIN location_options lo ON p.location_option_id = lo.id
+        WHERE p.id = ?
+    ");
     $stmt->execute([$id]);
     $property = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$property) {
         throw new Exception("Property not found");
+    }
+
+    // Extract location option data
+    if ($property['location_option_id']) {
+        $property['location_option'] = [
+            'id' => $property['location_option_id'],
+            'name' => $property['location_option_name'],
+            'description' => $property['location_option_description']
+        ];
+        
+        // Remove redundant fields from main property object
+        unset($property['location_option_name']);
+        unset($property['location_option_description']);
+    } else {
+        $property['location_option'] = null;
     }
 
     $stmt = $pdo->prepare("SELECT * FROM property_images WHERE property_id = ?");

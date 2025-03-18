@@ -2,7 +2,7 @@ import React from 'react';
 import { IconType } from 'react-icons';
 import { FaSignOutAlt } from 'react-icons/fa';
 
-type TabType = 'profile' | 'favorites' | 'bookings' | 'settings';
+type TabType = 'profile' | 'favorites' | 'settings';
 
 interface TabItem {
   id: TabType;

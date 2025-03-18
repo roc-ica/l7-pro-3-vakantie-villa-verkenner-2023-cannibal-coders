@@ -15,6 +15,14 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Location options table
+CREATE TABLE IF NOT EXISTS location_options (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Properties table
 CREATE TABLE IF NOT EXISTS properties (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -31,7 +39,9 @@ CREATE TABLE IF NOT EXISTS properties (
     image_url TEXT,
     status ENUM('available', 'sold', 'pending') DEFAULT 'available',
     property_type ENUM('apartment', 'house', 'villa', 'cabin', 'tent', 'loft') DEFAULT 'villa',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    location_option_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (location_option_id) REFERENCES location_options(id) ON DELETE SET NULL
 );
 
 -- Property images table
@@ -92,7 +102,17 @@ INSERT INTO hero_images (url, location) VALUES
 ('https://images.unsplash.com/photo-1499793983690-e29da59ef1c2', 'Mountain Retreat, Norway'),
 ('https://images.unsplash.com/photo-1470770841072-f978cf4d019e', 'Lakeside Cabin, Canada');
 
+-- Add sample location options
+INSERT INTO location_options (name, description) VALUES
+('Beach Front', 'Properties located directly on the beach'),
+('Mountain View', 'Properties with views of mountains'),
+('City Center', 'Properties located in city centers'),
+('Countryside', 'Properties in rural areas'),
+('Lakeside', 'Properties by lakes'),
+('Ski-in/Ski-out', 'Properties with direct access to ski slopes');
+
 -- Add this at the end of your database.sql file to verify data
 SELECT 'Verifying database setup...' as '';
 SELECT COUNT(*) as property_count FROM properties;
 SELECT COUNT(*) as image_count FROM property_images;
+SELECT COUNT(*) as location_options_count FROM location_options;

@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import PropertyList from '../../components/property/PropertyList';
 import PropertySearch from '../../components/property/search/PropertySearch';
 import { setProperties, setLoading } from './propertySlice';
-import { propertyService } from '../../services/api';
+import { propertyService } from '../../api/api';
 import { PropertyFilter } from '../../types/property';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaSearch, FaMapMarkerAlt, FaFilter, FaSadTear, FaExclamationTriangle, FaSlidersH, FaTimes, FaSortAmountDown, FaThLarge, FaMap } from 'react-icons/fa';

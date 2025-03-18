@@ -96,10 +96,6 @@ const AccountHeader: React.FC<AccountHeaderProps> = ({ user }) => {
                 </div>
                 <div className="text-center">
                   <div className="font-bold text-white text-xl">3</div>
-                  <div className="text-white/70">Bookings</div>
-                </div>
-                <div className="text-center">
-                  <div className="font-bold text-white text-xl">3</div>
                   <div className="text-white/70">Reviews</div>
                 </div>
               </motion.div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaSearch, FaMapMarkerAlt, FaCalendar, FaUsers, FaCompass } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
-import { heroService } from '../../../services/api';
+import { heroService } from '../../../api/api';
 
 const HeroSection: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);

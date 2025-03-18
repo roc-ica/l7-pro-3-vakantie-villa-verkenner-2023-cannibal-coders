@@ -9,13 +9,17 @@ interface PropertyBookingCardProps {
   price: string;
   isGeneratingPDF: boolean;
   onDownloadPDF: () => void;
+  locationOption?: { id: number; name: string; description?: string } | null;
+  propertyTypeInfo?: { id: string; name: string; description: string } | null;
 }
 
 const PropertyBookingCard: React.FC<PropertyBookingCardProps> = ({ 
   property, 
   price, 
   isGeneratingPDF,
-  onDownloadPDF
+  onDownloadPDF,
+  locationOption,
+  propertyTypeInfo
 }) => {
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -126,7 +130,8 @@ const PropertyBookingCard: React.FC<PropertyBookingCardProps> = ({
         <ul className="space-y-3 text-custom-charcoal">
           {[
             { label: 'Property ID', value: property.id },
-            { label: 'Type', value: property.property_type || 'Villa' },
+            { label: 'Type', value: propertyTypeInfo?.name || property.property_type },
+            { label: 'Location Type', value: locationOption?.name || 'Standard' },
             { label: 'Year Built', value: '2020' },
             { label: 'Last Updated', value: formatDate(property.updated_at || property.created_at) }
           ].map((detail, index) => (

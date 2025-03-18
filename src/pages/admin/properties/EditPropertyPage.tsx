@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import AdminLayout from '../../../components/admin/AdminLayout';
 import PropertyForm from '../../../components/admin/properties/PropertyForm';
-import { propertyService } from '../../../services/api';
+import { propertyService } from '../../../api/api';
 import { Property } from '../../../types/property';
 
 const EditPropertyPage: React.FC = () => {

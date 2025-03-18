@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Property } from '../../types/property';
-import { propertyService } from '../../services/api';
+import { propertyService } from '../../api/api';
 import { formatPrice } from '../../utils/formatters';
 import { generatePropertyPDF } from '../../components/pdf/PropertyPDFGenerator';
 
@@ -13,10 +13,25 @@ import PropertyDetailsTabs from './components/PropertyDetailsTabs/PropertyDetail
 import PropertyBookingCard from './components/PropertyBookingCard/PropertyBookingCard';
 import ImageCarousel from './components/ImageCarousel/ImageCarousel';
 
+// Add LocationOption type
+interface LocationOption {
+  id: number;
+  name: string;
+  description?: string;
+}
+
+interface PropertyTypeInfo {
+  id: string;
+  name: string;
+  description: string;
+}
+
 const PropertyDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [property, setProperty] = useState<Property | null>(null);
+  const [locationOption, setLocationOption] = useState<LocationOption | null>(null);
+  const [propertyTypeInfo, setPropertyTypeInfo] = useState<PropertyTypeInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
@@ -29,6 +44,50 @@ const PropertyDetailsPage: React.FC = () => {
 
         const propertyData = await propertyService.getPropertyById(parseInt(id));
         setProperty(propertyData);
+        
+        // Use the location_option data from the API response
+        if (propertyData.location_option) {
+          setLocationOption(propertyData.location_option);
+        }
+
+        // Set property type information
+        const propertyTypeMapping: Record<string, PropertyTypeInfo> = {
+          'apartment': {
+            id: 'apartment',
+            name: 'Apartment',
+            description: 'Self-contained housing unit that occupies part of a building'
+          },
+          'house': {
+            id: 'house',
+            name: 'House',
+            description: 'A building for human habitation, typically for a single family'
+          },
+          'villa': {
+            id: 'villa',
+            name: 'Villa',
+            description: 'Luxury residence often with gardens and spacious accommodations'
+          },
+          'cabin': {
+            id: 'cabin',
+            name: 'Cabin',
+            description: 'Small house made of wood, typically in a rural setting'
+          },
+          'tent': {
+            id: 'tent',
+            name: 'Tent',
+            description: 'Portable shelter made of fabric, ideal for outdoor enthusiasts'
+          },
+          'loft': {
+            id: 'loft',
+            name: 'Loft',
+            description: 'Large, open space converted for residential use, often with high ceilings'
+          }
+        };
+        
+        if (propertyData.property_type && propertyTypeMapping[propertyData.property_type]) {
+          setPropertyTypeInfo(propertyTypeMapping[propertyData.property_type]);
+        }
+        
       } catch (err) {
         console.error('Error fetching property:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch property details');
@@ -120,6 +179,8 @@ const PropertyDetailsPage: React.FC = () => {
         formattedPrice={formattedPrice}
         isGeneratingPDF={isGeneratingPDF}
         onDownloadPDF={handleDownloadPDF}
+        locationOption={locationOption}
+        propertyTypeInfo={propertyTypeInfo}
       />
 
       {/* Main Content */}
@@ -132,6 +193,7 @@ const PropertyDetailsPage: React.FC = () => {
               capacity={capacity} 
               bedrooms={property.bedrooms || 0} 
               price={formattedPrice}
+              propertyType={propertyTypeInfo?.name}
             />
 
             {/* Image Gallery */}
@@ -147,7 +209,12 @@ const PropertyDetailsPage: React.FC = () => {
             )}
 
             {/* Property Details Tabs */}
-            <PropertyDetailsTabs property={property} address={address} />
+            <PropertyDetailsTabs 
+              property={property} 
+              address={address} 
+              locationOption={locationOption}
+              propertyTypeInfo={propertyTypeInfo}
+            />
           </div>
 
           {/* Right Column: Booking Card */}
@@ -157,6 +224,8 @@ const PropertyDetailsPage: React.FC = () => {
               price={formattedPrice}
               isGeneratingPDF={isGeneratingPDF}
               onDownloadPDF={handleDownloadPDF}
+              locationOption={locationOption}
+              propertyTypeInfo={propertyTypeInfo}
             />
           </div>
         </div>

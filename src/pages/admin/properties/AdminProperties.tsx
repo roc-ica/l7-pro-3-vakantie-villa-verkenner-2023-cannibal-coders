@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { FaPlus, FaEdit, FaTrash, FaEye, FaSearch, FaSort, FaFilter } from 'react-icons/fa';
 import AdminLayout from '../../../components/admin/AdminLayout';
-import { propertyService } from '../../../services/api';
+import { propertyService } from '../../../api/api';
 import { Property } from '../../../types/property';
 import DeleteConfirmationModal from '../../../components/admin/modals/DeleteConfirmationModal';
 import { formatPrice, formatDate } from '../../../utils/formatters';

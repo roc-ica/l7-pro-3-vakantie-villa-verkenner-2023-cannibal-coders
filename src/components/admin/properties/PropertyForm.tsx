@@ -4,6 +4,13 @@ import { FaImage, FaTrash, FaPlus } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { Property, PropertyType, PropertyStatus } from '../../../types/property';
 
+// Define a LocationOption type
+interface LocationOption {
+  id: number;
+  name: string;
+  description?: string;
+}
+
 interface PropertyFormProps {
   initialData?: Partial<Property>;
   onSubmit: (data: FormData) => Promise<void>;
@@ -14,6 +21,7 @@ interface PropertyFormProps {
 const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, isEditing = false }) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [locationOptions, setLocationOptions] = useState<LocationOption[]>([]);
   const [formData, setFormData] = useState<Partial<Property>>({
     name: '',
     location: '',
@@ -27,6 +35,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, isEd
     amenities: '',
     property_type: 'villa',
     status: 'available',
+    location_option_id: undefined,
     ...initialData
   });
 
@@ -50,6 +59,30 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, isEd
       });
     }
   }, [initialData]);
+
+  // Fetch location options
+  useEffect(() => {
+    const fetchLocationOptions = async () => {
+      try {
+        // This would be replaced with your actual API call
+        // e.g. const response = await api.getLocationOptions();
+        // For now, we'll use mock data
+        const mockLocationOptions = [
+          { id: 1, name: 'Beach Front', description: 'Properties located directly on the beach' },
+          { id: 2, name: 'Mountain View', description: 'Properties with views of mountains' },
+          { id: 3, name: 'City Center', description: 'Properties located in city centers' },
+          { id: 4, name: 'Countryside', description: 'Properties in rural areas' },
+          { id: 5, name: 'Lakeside', description: 'Properties by lakes' },
+          { id: 6, name: 'Ski-in/Ski-out', description: 'Properties with direct access to ski slopes' }
+        ];
+        setLocationOptions(mockLocationOptions);
+      } catch (error) {
+        console.error('Error fetching location options:', error);
+      }
+    };
+
+    fetchLocationOptions();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -112,7 +145,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, isEd
     if (!formData.capacity || formData.capacity < 1) newErrors.capacity = "Valid capacity is required";
     if (!formData.bedrooms || formData.bedrooms < 1) newErrors.bedrooms = "Valid bedrooms count is required";
     if (!formData.bathrooms || formData.bathrooms < 1) newErrors.bathrooms = "Valid bathrooms count is required";
-    if (!formData.price || formData.price <= 0) newErrors.price = "Valid price is required";
+    if (!formData.price || Number(formData.price) <= 0) newErrors.price = "Valid price is required";
     if (!formData.description?.trim()) newErrors.description = "Description is required";
     if (!isEditing && !mainImage) newErrors.mainImage = "Main image is required";
     
@@ -131,21 +164,27 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, isEd
       // Create FormData object to handle file uploads
       const formDataToSubmit = new FormData();
       
-      // Add all text fields
+      // Add all text fields - with special handling for location_option_id
       Object.entries(formData).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
+        if (key === 'location_option_id') {
+          // Explicitly convert location_option_id to string or send empty string
+          // PHP will interpret empty string as NULL for int fields
+          const locationValueToSend = value ? value.toString() : '';
+          console.log(`Sending ${key}:`, locationValueToSend || 'empty string');
+          formDataToSubmit.append(key, locationValueToSend);
+        }
+        else if (value !== undefined && value !== null) {
           formDataToSubmit.append(key, value.toString());
         }
       });
       
-      // Add main image if present
-      if (mainImage) {
-        formDataToSubmit.append('main_image', mainImage);
-      }
-      
-      // Add additional images if present
-      additionalImages.forEach((image, index) => {
-        formDataToSubmit.append(`additional_images[${index}]`, image);
+      // For debugging
+      formDataToSubmit.forEach((value, key) => {
+        if (key === 'location_option_id') {
+          console.log(`Form data sent: ${key} = "${value}" (${typeof value}, ${value === '' ? 'empty' : 'not empty'})`);
+        } else {
+          console.log(`Form data sent: ${key} = ${value}`);
+        }
       });
       
       // Call the onSubmit function passed from parent
@@ -297,6 +336,27 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, isEd
               {errors.country && (
                 <p className="mt-1 text-sm text-red-500">{errors.country}</p>
               )}
+            </div>
+
+            {/* Location Option */}
+            <div>
+              <label htmlFor="location_option_id" className="block mb-1 text-sm font-medium text-custom-charcoal">
+                Location Type
+              </label>
+              <select
+                id="location_option_id"
+                name="location_option_id"
+                value={formData.location_option_id || 'Ik de dev ben te lui om types te plaatsen dus dit blijft zo'}
+                onChange={(e) => setFormData({...formData, location_option_id: e.target.value ? parseInt(e.target.value) : undefined})}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-custom-terra/30 focus:border-custom-terra"
+              >
+                <option value="">Select a location type</option>
+                {locationOptions.map(option => (
+                  <option key={option.id} value={option.id}>
+                    {option.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Full Address */}

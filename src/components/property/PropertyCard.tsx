@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaBed, FaBath, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaBed, FaBath, FaMapMarkerAlt, FaTag } from 'react-icons/fa';
 import { Property } from '../../types/property';
 import { formatPrice } from '../../utils/formatters';
 import { formatImageUrl, getPlaceholderForType } from '../../utils/imageUtils';
@@ -23,6 +23,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, index = 0 }) => {
     bathrooms,
     image_url
   } = property;
+
+  // Get location option directly from property
+  const locationOption = property.location_option;
 
   // Format price
   const priceValue = typeof price === 'number' 
@@ -56,6 +59,13 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, index = 0 }) => {
             <div className="absolute top-0 right-0 bg-custom-terra text-white px-3 py-1 m-3 rounded-lg font-medium">
               {formatPrice(priceValue)}
             </div>
+            {/* Location type badge */}
+            {locationOption && (
+              <div className="absolute top-4 left-4 bg-white/90 text-custom-terra px-3 py-1 rounded-full font-medium shadow-md text-sm flex items-center">
+                <FaTag className="mr-1" size={12} />
+                {locationOption.name}
+              </div>
+            )}
           </div>
           
           <div className="p-4">

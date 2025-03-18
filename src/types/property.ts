@@ -8,7 +8,15 @@ export interface PropertyImage {
 export type PropertyStatus = 'available' | 'sold' | 'pending';
 export type PropertyType = 'apartment' | 'house' | 'villa' | 'cabin' | 'tent' | 'loft';
 
+// Add LocationOption interface
+export interface LocationOption {
+  id: number;
+  name: string;
+  description?: string;
+}
+
 export interface Property {
+  location_option_id?: number;
   id: number;
   name: string;
   location: string;
@@ -28,6 +36,7 @@ export interface Property {
   status: PropertyStatus;
   property_type: PropertyType;
   updated_at?: string;
+  location_option?: LocationOption;
 }
 
 export interface PropertyFilter {

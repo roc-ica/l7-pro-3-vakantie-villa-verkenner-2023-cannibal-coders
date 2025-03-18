@@ -60,6 +60,16 @@ try {
     $property_type = isset($_POST['property_type']) ? sanitize($_POST['property_type']) : $existingProperty['property_type'];
     $status = isset($_POST['status']) ? sanitize($_POST['status']) : $existingProperty['status'];
     
+    // Handle location_option_id (important fix)
+    $location_option_id = null;
+    if (isset($_POST['location_option_id']) && $_POST['location_option_id'] !== '') {
+        $location_option_id = intval($_POST['location_option_id']);
+        // Debug log
+        error_log("Received location_option_id: " . $_POST['location_option_id'] . " | Converted to: " . $location_option_id);
+    } else {
+        error_log("No location_option_id provided or empty value received");
+    }
+    
     // Start image URL with existing value
     $image_url = $existingProperty['image_url'];
     
@@ -113,7 +123,7 @@ try {
     // Begin transaction
     $pdo->beginTransaction();
     
-    // Update property
+    // Update property - NOW INCLUDING LOCATION_OPTION_ID
     $stmt = $pdo->prepare("
         UPDATE properties SET
             name = :name,
@@ -128,7 +138,8 @@ try {
             amenities = :amenities,
             image_url = :image_url,
             property_type = :property_type,
-            status = :status
+            status = :status,
+            location_option_id = :location_option_id
         WHERE id = :id
     ");
     
@@ -145,6 +156,7 @@ try {
     $stmt->bindParam(':image_url', $image_url);
     $stmt->bindParam(':property_type', $property_type);
     $stmt->bindParam(':status', $status);
+    $stmt->bindParam(':location_option_id', $location_option_id, PDO::PARAM_INT);
     $stmt->bindParam(':id', $id);
     
     $stmt->execute();

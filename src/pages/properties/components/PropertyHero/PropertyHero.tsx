@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaArrowLeft, FaMapMarkerAlt, FaDollarSign, FaFilePdf, FaDownload } from 'react-icons/fa';
+import { FaArrowLeft, FaMapMarkerAlt, FaDollarSign, FaFilePdf, FaDownload, FaTag, FaHome } from 'react-icons/fa';
 import { formatImageUrl, getPlaceholderForType } from '../../../../utils/imageUtils';
 import { Property } from '../../../../types/property';
 
@@ -10,13 +10,17 @@ interface PropertyHeroProps {
   formattedPrice: string;
   isGeneratingPDF: boolean;
   onDownloadPDF: () => void;
+  locationOption?: { id: number; name: string; description?: string } | null;
+  propertyTypeInfo?: { id: string; name: string; description: string } | null;
 }
 
 const PropertyHero: React.FC<PropertyHeroProps> = ({ 
   property, 
   formattedPrice, 
   isGeneratingPDF, 
-  onDownloadPDF 
+  onDownloadPDF,
+  locationOption,
+  propertyTypeInfo
 }) => {
   return (
     <div className="relative h-[500px] md:h-[600px]">
@@ -26,8 +30,8 @@ const PropertyHero: React.FC<PropertyHeroProps> = ({
           src={formatImageUrl(property.image_url)} 
           alt={property.name}
           className="w-full h-full object-cover"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
+           onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+           const target = e.target as HTMLImageElement;
             if (!target.src.includes('placeholder')) {
               target.src = getPlaceholderForType('property');
               target.onerror = null;
@@ -94,6 +98,22 @@ const PropertyHero: React.FC<PropertyHeroProps> = ({
                 <FaDollarSign className="mr-2 text-custom-terra" />
                 <span className="text-xl font-semibold">{formattedPrice}</span>
               </div>
+
+              {/* Property Type Badge */}
+              {propertyTypeInfo && (
+                <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm flex items-center">
+                  <FaHome className="mr-1" />
+                  {propertyTypeInfo.name}
+                </span>
+              )}
+              
+              {/* Location Type Badge */}
+              {locationOption && (
+                <span className="px-3 py-1 bg-custom-terra/90 backdrop-blur-sm rounded-full text-sm flex items-center">
+                  <FaTag className="mr-1" />
+                  {locationOption.name}
+                </span>
+              )}
             </div>
           </motion.div>
         </div>

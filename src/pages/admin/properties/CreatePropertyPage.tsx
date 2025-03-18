@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import AdminLayout from '../../../components/admin/AdminLayout';
 import PropertyForm from '../../../components/admin/properties/PropertyForm';
-import { propertyService } from '../../../services/api';
+import { propertyService } from '../../../api/api';
 
 const CreatePropertyPage: React.FC = () => {
   const [loading, setLoading] = useState(false);

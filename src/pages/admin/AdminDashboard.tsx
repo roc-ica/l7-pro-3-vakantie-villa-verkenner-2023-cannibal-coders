@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { FaHome, FaUsers, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaDollarSign } from 'react-icons/fa';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { Property } from '../../types/property';
-import { propertyService } from '../../services/api';
+import { propertyService } from '../../api/api';
 import { formatPrice, formatDate } from '../../utils/formatters';
 import { toast } from 'react-toastify';
 import DeleteConfirmationModal from '../../components/admin/modals/DeleteConfirmationModal';

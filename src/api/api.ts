@@ -105,14 +105,33 @@ export const propertyService = {
     try {
       console.log(`Updating property ${id}...`);
       
-      // For debugging: log form data contents
+      // Create a new FormData object to ensure proper data is sent
+      const processedFormData = new FormData();
+      
+      // Process form data with special handling for location_option_id
       formData.forEach((value, key) => {
-        console.log(`${key}: ${value instanceof File ? value.name : value}`);
+        if (key === 'location_option_id') {
+          console.log(`Processing ${key}: "${value}" (${typeof value})`);
+          
+          // If empty value, send a signal that PHP will understand as NULL
+          if (value === '' || value === 'null' || value === 'undefined') {
+            // Use an explicit PHP representation that will be interpreted as NULL
+            processedFormData.append(key, '');
+            console.log(`${key} will be sent as empty string (to be NULL in PHP)`);
+          } else {
+            // Otherwise send the value
+            processedFormData.append(key, value);
+            console.log(`${key} will be sent as: ${value}`);
+          }
+        } else {
+          // For all other fields, just pass through the value
+          processedFormData.append(key, value);
+        }
       });
 
       const response = await fetch(`${API_URL}/properties/update.php?id=${id}`, {
         method: 'POST',
-        body: formData,
+        body: processedFormData,
       });
       
       const data = await response.json();

@@ -10,10 +10,9 @@ import AccountHeader from './sections/AccountHeader';
 import AccountTabs from './sections/AccountTabs';
 import ProfileSection from './sections/ProfileSection';
 import FavoritesSection from './sections/FavoritesSection';
-import BookingsSection from './sections/BookingsSection';
 import SettingsSection from './sections/SettingsSection';
 
-type TabType = 'profile' | 'favorites' | 'bookings' | 'settings';
+type TabType = 'profile' | 'favorites' | 'settings';
 
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center min-h-screen bg-custom-cream">
@@ -47,11 +46,6 @@ const AccountPage: React.FC = () => {
     { id: 2, title: 'Mountain Cabin', location: 'Aspen, CO', price: 275, rating: 4.5, image: '/img/mountain-cabin.jpg' },
     { id: 3, title: 'Urban Condo', location: 'Seattle, WA', price: 200, rating: 4.2, image: '/img/urban-condo.jpg' }
   ];
-  const mockBookings = [
-    { id: 1, title: 'Modern Beach House', location: 'Malibu, CA', price: 350, rating: 4.8, image: '/img/beach-house.jpg', checkIn: '2022-06-01', checkOut: '2022-06-15' },
-    { id: 2, title: 'Mountain Cabin', location: 'Aspen, CO', price: 275, rating: 4.5, image: '/img/mountain-cabin.jpg', checkIn: '2022-07-01', checkOut: '2022-07-15' },
-    { id: 3, title: 'Urban Condo', location: 'Seattle, WA', price: 200, rating: 4.2, image: '/img/urban-condo.jpg', checkIn: '2022-08-01', checkOut: '2022-08-15' }
-  ];
   const mockReviews = [
     { id: 1, title: 'Modern Beach House', location: 'Malibu, CA', price: 350, rating: 4.8, image: '/img/beach-house.jpg', review: 'Great place to stay, would definitely come back!' },
     { id: 2, title: 'Mountain Cabin', location: 'Aspen, CO', price: 275, rating: 4.5, image: '/img/mountain-cabin.jpg', review: 'Beautiful views and cozy atmosphere.' },
@@ -80,7 +74,6 @@ const AccountPage: React.FC = () => {
   const tabs = [
     { id: 'profile', label: 'Profile', icon: FaUser },
     { id: 'favorites', label: 'Favorites', icon: FaHeart },
-    { id: 'bookings', label: 'Bookings', icon: FaCalendarAlt },
     { id: 'settings', label: 'Settings', icon: FaCog }
   ] as const;
 
@@ -110,7 +103,7 @@ const AccountPage: React.FC = () => {
           <AccountTabs 
             tabs={tabs} 
             activeTab={activeTab} 
-            setActiveTab={setActiveTab} 
+            setActiveTab={(tab: TabType) => setActiveTab(tab)} 
             handleLogout={handleLogout}
           />
 
@@ -133,17 +126,12 @@ const AccountPage: React.FC = () => {
                     toggleEditing={toggleEditing}
                     handleSaveProfile={handleSaveProfile}
                     mockReviews={mockReviews}
-                    mockBookings={mockBookings}
                     mockFavorites={mockFavorites}
                   />
                 )}
 
                 {activeTab === 'favorites' && (
                   <FavoritesSection navigate={navigate} />
-                )}
-
-                {activeTab === 'bookings' && (
-                  <BookingsSection navigate={navigate} />
                 )}
 
                 {activeTab === 'settings' && (
