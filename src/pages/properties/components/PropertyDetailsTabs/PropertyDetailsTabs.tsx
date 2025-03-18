@@ -64,67 +64,61 @@ const PropertyDetailsTabs: React.FC<PropertyDetailsTabsProps> = ({
                 {property.description || 'No description provided for this property.'}
               </p>
 
-              {/* Enhanced Property & Location Info Cards */}
-              <div className="grid md:grid-cols-2 gap-6 mb-8">
-                {/* Enhanced Property Type Information */}
+              {/* Property & Location Info - New Simplified Version */}
+              <div className="space-y-8 mb-8">
+                {/* Property Type Information - Simplified */}
                 {propertyTypeInfo && (
-                  <div className="bg-white border border-custom-terra/20 rounded-xl shadow-sm overflow-hidden">
-                    <div className="bg-gradient-to-r from-custom-terra/20 to-custom-terra/5 px-6 py-4 border-b border-custom-terra/10">
-                      <h3 className="text-lg font-bold text-custom-dark flex items-center">
-                        <FaHome className="mr-3 text-custom-terra" />
-                        Property Type: {propertyTypeInfo.name}
+                  <div className="border-b border-gray-100 pb-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <FaHome className="text-custom-terra text-xl" />
+                      <h3 className="text-xl font-semibold text-custom-dark">
+                        Property Type: <span className="text-custom-terra">{propertyTypeInfo.name}</span>
                       </h3>
                     </div>
-                    {propertyTypeInfo.description && (
-                      <div className="p-6">
-                        <p className="text-custom-charcoal">{propertyTypeInfo.description}</p>
-                        <div className="mt-4 text-sm text-custom-charcoal/80 flex flex-wrap gap-4">
-                          <span className="inline-flex items-center">
-                            <span className="w-2 h-2 bg-custom-terra rounded-full mr-2"></span>
-                            Luxury Living
-                          </span>
-                          <span className="inline-flex items-center">
-                            <span className="w-2 h-2 bg-custom-terra rounded-full mr-2"></span>
-                            Premium Features
-                          </span>
-                          <span className="inline-flex items-center">
-                            <span className="w-2 h-2 bg-custom-terra rounded-full mr-2"></span>
-                            Privacy & Space
-                          </span>
-                        </div>
+                    <p className="text-custom-charcoal mb-4">{propertyTypeInfo.description}</p>
+                    
+                    <div className="mt-3 flex flex-wrap gap-x-8 gap-y-2 text-custom-charcoal">
+                      <div className="flex items-center">
+                        <span className="w-2 h-2 bg-custom-terra rounded-full mr-2"></span>
+                        <span>Luxury Living</span>
                       </div>
-                    )}
+                      <div className="flex items-center">
+                        <span className="w-2 h-2 bg-custom-terra rounded-full mr-2"></span>
+                        <span>Premium Features</span>
+                      </div>
+                      <div className="flex items-center">
+                        <span className="w-2 h-2 bg-custom-terra rounded-full mr-2"></span>
+                        <span>Privacy & Space</span>
+                      </div>
+                    </div>
                   </div>
                 )}
 
-                {/* Enhanced Location Type Information */}
+                {/* Location Type Information - Simplified */}
                 {locationOption && (
-                  <div className="bg-white border border-custom-sage/20 rounded-xl shadow-sm overflow-hidden">
-                    <div className="bg-gradient-to-r from-custom-sage/20 to-custom-sage/5 px-6 py-4 border-b border-custom-sage/10">
-                      <h3 className="text-lg font-bold text-custom-dark flex items-center">
-                        <FaMapMarkerAlt className="mr-3 text-custom-sage" />
-                        Location Type: {locationOption.name}
+                  <div className="border-b border-gray-100 pb-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <FaMapMarkerAlt className="text-custom-sage text-xl" />
+                      <h3 className="text-xl font-semibold text-custom-dark">
+                        Location Type: <span className="text-custom-sage">{locationOption.name}</span>
                       </h3>
                     </div>
-                    {locationOption.description && (
-                      <div className="p-6">
-                        <p className="text-custom-charcoal">{locationOption.description}</p>
-                        <div className="mt-4 text-sm text-custom-charcoal/80 flex flex-wrap gap-4">
-                          <span className="inline-flex items-center">
-                            <span className="w-2 h-2 bg-custom-sage rounded-full mr-2"></span>
-                            Tranquil Setting
-                          </span>
-                          <span className="inline-flex items-center">
-                            <span className="w-2 h-2 bg-custom-sage rounded-full mr-2"></span>
-                            Natural Beauty
-                          </span>
-                          <span className="inline-flex items-center">
-                            <span className="w-2 h-2 bg-custom-sage rounded-full mr-2"></span>
-                            Peaceful Retreat
-                          </span>
-                        </div>
+                    <p className="text-custom-charcoal mb-4">{locationOption.description}</p>
+                    
+                    <div className="mt-3 flex flex-wrap gap-x-8 gap-y-2 text-custom-charcoal">
+                      <div className="flex items-center">
+                        <span className="w-2 h-2 bg-custom-sage rounded-full mr-2"></span>
+                        <span>Tranquil Setting</span>
                       </div>
-                    )}
+                      <div className="flex items-center">
+                        <span className="w-2 h-2 bg-custom-sage rounded-full mr-2"></span>
+                        <span>Natural Beauty</span>
+                      </div>
+                      <div className="flex items-center">
+                        <span className="w-2 h-2 bg-custom-sage rounded-full mr-2"></span>
+                        <span>Peaceful Retreat</span>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>

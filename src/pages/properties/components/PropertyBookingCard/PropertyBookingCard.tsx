@@ -38,47 +38,19 @@ const PropertyBookingCard: React.FC<PropertyBookingCardProps> = ({
       {/* Price Header */}
       <div className="bg-gradient-to-r from-custom-sage to-custom-terra p-6 text-white">
         <div className="text-center">
-          <p className="text-sm uppercase tracking-wider mb-1">From</p>
+          <p className="text-sm uppercase tracking-wider mb-1">For</p>
           <p className="text-3xl font-bold">{price}</p>
-          <p className="text-sm opacity-80">per night</p>
         </div>
       </div>
 
       {/* Booking Form */}
       <div className="p-6">
-        <div className="mb-4">
-          <label className="block text-custom-charcoal text-sm mb-2">Check-in Date</label>
-          <input 
-            type="date"
-            className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-terra/30 focus:border-custom-terra"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-custom-charcoal text-sm mb-2">Check-out Date</label>
-          <input 
-            type="date"
-            className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-terra/30 focus:border-custom-terra"
-          />
-        </div>
-
-        <div className="mb-6">
-          <label className="block text-custom-charcoal text-sm mb-2">Guests</label>
-          <select 
-            className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-terra/30 focus:border-custom-terra appearance-none"
-          >
-            {[1, 2, 3, 4, 5, 6].map(num => (
-              <option key={num} value={num}>{num} Guest{num !== 1 ? 's' : ''}</option>
-            ))}
-          </select>
-        </div>
-
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           className="w-full py-3 bg-custom-terra text-white rounded-lg font-semibold hover:bg-custom-sage transition-colors mb-3 flex items-center justify-center"
         >
-          Book Now
+          Contact
         </motion.button>
 
         <div className="flex gap-2 mb-3">
