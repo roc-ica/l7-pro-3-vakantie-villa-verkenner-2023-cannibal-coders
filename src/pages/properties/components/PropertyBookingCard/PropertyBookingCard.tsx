@@ -3,6 +3,9 @@ import { motion } from 'framer-motion';
 import { FaRegHeart, FaHeart, FaFilePdf, FaDownload } from 'react-icons/fa';
 import { Property } from '../../../../types/property';
 import { formatDate } from '../../../../utils/formatters';
+import BookingTicketModal from '../../../../components/property/BookingTicketModal';
+import { Ticket } from '../../../../types/ticket';
+import { toast } from 'react-toastify';
 
 interface PropertyBookingCardProps {
   property: Property;
@@ -22,10 +25,32 @@ const PropertyBookingCard: React.FC<PropertyBookingCardProps> = ({
   propertyTypeInfo
 }) => {
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
     // Add logic to save to user's favorites
+  };
+  
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+  
+  const handleSubmitTicket = (name: string, question: string) => {
+    // Create a new ticket
+    const ticket: Ticket = {
+      property_id: property.id,
+      property_name: property.name,
+      user_name: name,
+      question: question,
+      created_at: new Date().toISOString()
+    };
+    
+    console.log('Submitted ticket:', ticket);
+    // In a real application, you would save this to your backend
+    
+    toast.success('Your booking request has been submitted!');
+    // You could also add logic here to store the ticket in localStorage or send it to an API
   };
 
   return (
@@ -48,10 +73,19 @@ const PropertyBookingCard: React.FC<PropertyBookingCardProps> = ({
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
+          onClick={handleOpenModal}
           className="w-full py-3 bg-custom-terra text-white rounded-lg font-semibold hover:bg-custom-sage transition-colors mb-3 flex items-center justify-center"
         >
-          Contact
+          Book Now
         </motion.button>
+
+        {/* Ticket Modal */}
+        <BookingTicketModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          property={property}
+          onSubmitTicket={handleSubmitTicket}
+        />
 
         <div className="flex gap-2 mb-3">
           <button 
