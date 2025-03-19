@@ -6,6 +6,7 @@ import PriceFilter from './components/PriceFilter';
 import FeaturesFilter from './components/FeaturesFilter';
 import AmenitiesFilter from './components/AmenitiesFilter';
 import SearchActions from './components/SearchActions';
+import LocationOptionsFilter from './components/LocationOptionsFilter';
 
 interface PropertySearchProps {
   onSearch: (filters: PropertyFilter) => void;
@@ -84,6 +85,11 @@ const PropertySearch: React.FC<PropertySearchProps> = ({
       <AmenitiesFilter 
         filters={filters} 
         onChange={handleFilterChange} 
+      />
+
+      <LocationOptionsFilter
+        filters={filters}
+        onChange={handleFilterChange}
       />
       
       <SearchActions 

@@ -12,16 +12,30 @@ const buildQueryString = (filters: PropertyFilter): string => {
   if (filters.maxPrice) params.append('max_price', filters.maxPrice.toString());
   if (filters.minBedrooms) params.append('min_bedrooms', filters.minBedrooms.toString());
   if (filters.minCapacity) params.append('min_capacity', filters.minCapacity.toString());
-  if (filters.amenities?.length) params.append('amenities', filters.amenities.join(','));
+  
+  // Add amenities filter
+  if (filters.amenities?.length) {
+    params.append('amenities', filters.amenities.join(','));
+  }
 
   // Add property type filter
   if (filters.propertyType) {
     params.append('property_type', filters.propertyType);
   }
 
-  // Add country filter (exact match)
-  if (filters.country) {
-    params.append('country_exact', filters.country);
+  // Add location option ID filter
+  if (filters.locationOptionId) {
+    params.append('location_option_id', filters.locationOptionId.toString());
+  }
+
+  // Add bedrooms filter (convert to min_bedrooms format)
+  if (filters.bedrooms) {
+    params.append('min_bedrooms', filters.bedrooms.toString());
+  }
+
+  // Add capacity filter (convert to min_capacity format)
+  if (filters.capacity) {
+    params.append('min_capacity', filters.capacity.toString());
   }
 
   // Log the query string for debugging
@@ -167,6 +181,34 @@ export const propertyService = {
     } catch (error) {
       console.error('Error deleting property:', error);
       throw error;
+    }
+  }
+};
+
+// Add a function to get location options
+export const locationOptionsService = {
+  async getLocationOptions(): Promise<any[]> {
+    try {
+      const response = await fetch(`${API_URL}/location-options.php`);
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch location options');
+      }
+
+      return data.locationOptions || [];
+      
+    } catch (error) {
+      console.error('API Error:', error);
+      // Return some default options as fallback
+      return [
+        { id: 1, name: 'Beach Front', description: 'Properties located directly on the beach' },
+        { id: 2, name: 'Mountain View', description: 'Properties with views of mountains' },
+        { id: 3, name: 'City Center', description: 'Properties located in city centers' },
+        { id: 4, name: 'Countryside', description: 'Properties in rural areas' },
+        { id: 5, name: 'Lakeside', description: 'Properties by lakes' },
+        { id: 6, name: 'Ski-in/Ski-out', description: 'Properties with direct access to ski slopes' }
+      ];
     }
   }
 };

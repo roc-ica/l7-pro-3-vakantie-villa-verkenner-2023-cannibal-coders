@@ -54,6 +54,7 @@ export interface PropertyFilter {
   amenities?: string[];
   propertyType?: string;
   status?: PropertyStatus;
+  locationOptionId?: number;
 }
 
 export interface PropertyListProps {
