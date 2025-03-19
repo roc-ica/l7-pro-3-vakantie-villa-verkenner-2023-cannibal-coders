@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { Property } from '../../types/property';
+import { ticketService } from '../../api/ticketService';
 
 interface BookingTicketModalProps {
   isOpen: boolean;
@@ -26,7 +27,17 @@ const BookingTicketModal: React.FC<BookingTicketModalProps> = ({ isOpen, onClose
 
     try {
       setIsSubmitting(true);
+      
+      // Submit ticket directly to API with property ID
+      await ticketService.createTicket({
+        property_id: property.id,
+        user_name: userName,
+        question: question
+      });
+      
+      // Also call the parent component's onSubmitTicket for any additional logic
       onSubmitTicket(userName, question);
+      
       toast.success('Your ticket has been submitted successfully!');
       setUserName('');
       setQuestion('');

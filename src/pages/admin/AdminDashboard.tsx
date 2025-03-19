@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaHome, FaUsers, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaDollarSign } from 'react-icons/fa';
+import { FaHome, FaUsers, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaDollarSign, FaTicketAlt } from 'react-icons/fa';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { Property } from '../../types/property';
+import { Ticket } from '../../types/ticket';
 import { propertyService } from '../../api/api';
+import { ticketService } from '../../api/ticketService';
 import { formatPrice, formatDate } from '../../utils/formatters';
 import { toast } from 'react-toastify';
 import DeleteConfirmationModal from '../../components/admin/modals/DeleteConfirmationModal';
@@ -21,8 +23,11 @@ interface DashboardStat {
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [properties, setProperties] = useState<Property[]>([]);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
+  const [ticketsLoading, setTicketsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [ticketsError, setTicketsError] = useState<string | null>(null);
   const [propertyToDelete, setPropertyToDelete] = useState<Property | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -40,7 +45,21 @@ const AdminDashboard: React.FC = () => {
       }
     };
 
+    const fetchTickets = async () => {
+      try {
+        setTicketsLoading(true);
+        const tickets = await ticketService.getTickets();
+        setTickets(tickets);
+      } catch (err) {
+        console.error('Error fetching tickets:', err);
+        setTicketsError('Failed to load tickets. Please try again later.');
+      } finally {
+        setTicketsLoading(false);
+      }
+    };
+
     fetchProperties();
+    fetchTickets();
   }, []);
 
   const recentProperties = properties.slice(0, 5);
@@ -177,6 +196,102 @@ const AdminDashboard: React.FC = () => {
           <div className="p-4 border-t border-gray-100 text-right">
             <Link to="/admin/properties" className="text-custom-terra hover:underline text-sm">
               View all properties →
+            </Link>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Tickets Section */}
+      <motion.div
+        className="bg-white rounded-xl shadow-md overflow-hidden mb-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.3 }}
+      >
+        <div className="p-6 border-b border-gray-100">
+          <h2 className="text-lg font-semibold text-custom-dark flex items-center">
+            <FaTicketAlt className="mr-2 text-custom-terra" /> Recent Tickets
+          </h2>
+        </div>
+        <div className="overflow-x-auto">
+          {ticketsLoading ? (
+            <div className="p-8 text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-custom-terra mb-3"></div>
+              <p className="text-custom-charcoal">Loading tickets...</p>
+            </div>
+          ) : ticketsError ? (
+            <div className="p-8 text-center text-red-600">{ticketsError}</div>
+          ) : tickets.length === 0 ? (
+            <div className="p-8 text-center text-custom-charcoal">
+              No tickets found
+            </div>
+          ) : (
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="py-4 px-6 text-left text-sm font-medium text-gray-500">ID</th>
+                  <th className="py-4 px-6 text-left text-sm font-medium text-gray-500">Property</th>
+                  <th className="py-4 px-6 text-left text-sm font-medium text-gray-500">User</th>
+                  <th className="py-4 px-6 text-left text-sm font-medium text-gray-500">Question</th>
+                  <th className="py-4 px-6 text-left text-sm font-medium text-gray-500">Created</th>
+                  <th className="py-4 px-6 text-center text-sm font-medium text-gray-500">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {tickets.slice(0, 5).map((ticket) => (
+                  <tr key={ticket.id} className="hover:bg-gray-50">
+                    <td className="py-4 px-6 text-custom-dark">
+                      #{ticket.id}
+                    </td>
+                    <td className="py-4 px-6">
+                      <Link 
+                        to={`/property/${ticket.property_id}`}
+                        className="text-custom-terra hover:underline"
+                      >
+                        {ticket.property_name || `Property #${ticket.property_id}`}
+                      </Link>
+                    </td>
+                    <td className="py-4 px-6 text-custom-charcoal">
+                      {ticket.user_name}
+                    </td>
+                    <td className="py-4 px-6 text-custom-charcoal">
+                      {ticket.question.length > 50 
+                        ? `${ticket.question.substring(0, 50)}...` 
+                        : ticket.question}
+                    </td>
+                    <td className="py-4 px-6 text-custom-charcoal">
+                      {ticket.created_at ? formatDate(ticket.created_at) : 'N/A'}
+                    </td>
+                    <td className="py-4 px-6">
+                      <div className="flex items-center justify-center space-x-2">
+                        <button
+                          onClick={() => {
+                            // Implement view ticket details logic
+                            toast.info(`Viewing ticket #${ticket.id} details`);
+                          }}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-full"
+                        >
+                          <FaEye />
+                        </button>
+                        <button 
+                          onClick={() => {
+                            // Implement reply to ticket logic
+                            toast.info(`Reply to ticket #${ticket.id}`);
+                          }}
+                          className="p-2 text-custom-sage hover:bg-green-50 rounded-full"
+                        >
+                          <FaEdit />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          <div className="p-4 border-t border-gray-100 text-right">
+            <Link to="/admin/tickets" className="text-custom-terra hover:underline text-sm">
+              View all tickets →
             </Link>
           </div>
         </div>
