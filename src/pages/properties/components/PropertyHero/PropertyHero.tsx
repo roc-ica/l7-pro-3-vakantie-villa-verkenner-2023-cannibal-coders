@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaArrowLeft, FaMapMarkerAlt, FaDollarSign, FaFilePdf, FaDownload, FaTag, FaHome } from 'react-icons/fa';
+import { FaArrowLeft, FaMapMarkerAlt, FaDollarSign, FaTag, FaHome } from 'react-icons/fa';
 import { formatImageUrl, getPlaceholderForType } from '../../../../utils/imageUtils';
 import { Property } from '../../../../types/property';
 
-interface PropertyHeroProps {
+// Update interface to remove favorite-related props
+export interface PropertyHeroProps {
   property: Property;
   formattedPrice: string;
   isGeneratingPDF: boolean;
@@ -44,7 +45,7 @@ const PropertyHero: React.FC<PropertyHeroProps> = ({
       {/* Header Content */}
       <div className="absolute inset-0 flex flex-col justify-end">
         <div className="container mx-auto px-4 pb-12">
-          {/* Top navigation and actions */}
+          {/* Top navigation - remove favorite button */}
           <div className="flex justify-between items-center mb-8">
             <Link 
               to="/properties"

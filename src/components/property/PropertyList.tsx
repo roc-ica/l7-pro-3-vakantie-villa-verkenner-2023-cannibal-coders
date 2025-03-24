@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaMapMarkerAlt, FaStar, FaBed, FaBath, FaUsers, FaRegHeart, FaHeart, FaHome, FaRulerCombined, FaWifi } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaStar, FaBed, FaBath, FaUsers, FaRegHeart, FaHeart, FaHome, FaRulerCombined, FaWifi, FaSpinner } from 'react-icons/fa';
 import { Property, PropertyStatus } from '../../types/property';
 import { formatPrice, getStatusColor } from '../../utils/formatters';
 import { formatImageUrl, getPlaceholderForType } from '../../utils/imageUtils'; // Import the image utilities
+import { favoritesService } from '../../api/api';
 import MapView from './MapView';
 
 interface PropertyListProps {
@@ -14,13 +15,48 @@ interface PropertyListProps {
 
 const PropertyCard: React.FC<{ property: Property; index: number }> = ({ property, index }) => {
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   
-  const handleFavoriteClick = (e: React.MouseEvent) => {
+  // Ensure property ID is a number
+  const propertyId = typeof property.id === 'string' ? parseInt(property.id) : property.id;
+  
+  // Check if property is favorited when component mounts
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      try {
+        const favorited = await favoritesService.isPropertyFavorited(propertyId);
+        setIsFavorite(favorited);
+      } catch (error) {
+        console.error(`Error checking favorite status for property ${propertyId}:`, error);
+      }
+    };
+    
+    checkFavoriteStatus();
+  }, [propertyId]);
+  
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsFavorite(!isFavorite);
-    // Add logic to save to favorites
+    e.stopPropagation();
+    
+    if (isLoading) return;
+    
+    setIsLoading(true);
+    try {
+      if (isFavorite) {
+        await favoritesService.removeFromFavorites(propertyId);
+      } else {
+        await favoritesService.addToFavorites(propertyId);
+      }
+      
+      // Toggle the favorite state
+      setIsFavorite(!isFavorite);
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Extract property amenities for display
@@ -86,12 +122,15 @@ const PropertyCard: React.FC<{ property: Property; index: number }> = ({ propert
             {/* Overlay gradient on hover */}
             <div className="absolute inset-0 bg-gradient-to-t from-custom-dark/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             
-            {/* Favorite Button */}
+            {/* Favorite Button - Updated with loading state */}
             <button 
               onClick={handleFavoriteClick}
+              disabled={isLoading}
               className="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-full shadow-lg transition-colors z-10"
             >
-              {isFavorite ? (
+              {isLoading ? (
+                <FaSpinner className="animate-spin text-custom-terra" />
+              ) : isFavorite ? (
                 <FaHeart className="text-custom-terra" />
               ) : (
                 <FaRegHeart className="text-custom-charcoal group-hover:text-custom-terra transition-colors" />

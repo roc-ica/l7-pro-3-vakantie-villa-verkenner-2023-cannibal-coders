@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Property } from '../../types/property';
-import { propertyService } from '../../api/api';
+import { propertyService, favoritesService } from '../../api/api';
 import { formatPrice } from '../../utils/formatters';
 import { generatePropertyPDF } from '../../components/pdf/PropertyPDFGenerator';
 
@@ -35,6 +35,7 @@ const PropertyDetailsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -96,7 +97,19 @@ const PropertyDetailsPage: React.FC = () => {
       }
     };
 
+    const checkFavoriteStatus = async () => {
+      if (id) {
+        try {
+          const favorited = await favoritesService.isPropertyFavorited(parseInt(id));
+          setIsFavorite(favorited);
+        } catch (error) {
+          console.error('Error checking favorite status:', error);
+        }
+      }
+    };
+
     fetchProperty();
+    checkFavoriteStatus();
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
   }, [id]);
@@ -183,7 +196,8 @@ const PropertyDetailsPage: React.FC = () => {
         propertyTypeInfo={propertyTypeInfo}
       />
 
-      {/* Main Content */}
+      {/* Remove separate favorite button */}
+      {/* Keep the main content layout */}
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column: Main Content */}
@@ -226,6 +240,8 @@ const PropertyDetailsPage: React.FC = () => {
               onDownloadPDF={handleDownloadPDF}
               locationOption={locationOption}
               propertyTypeInfo={propertyTypeInfo}
+              initialIsFavorite={isFavorite}
+              onFavoriteToggle={setIsFavorite}
             />
           </div>
         </div>

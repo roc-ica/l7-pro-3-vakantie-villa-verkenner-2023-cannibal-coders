@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaRegHeart, FaHeart, FaFilePdf, FaDownload } from 'react-icons/fa';
+import { FaRegHeart, FaHeart, FaFilePdf, FaDownload, FaSpinner } from 'react-icons/fa';
 import { Property } from '../../../../types/property';
 import { formatDate } from '../../../../utils/formatters';
 import BookingTicketModal from '../../../../components/property/BookingTicketModal';
 import { Ticket } from '../../../../types/ticket';
 import { toast } from 'react-toastify';
+import { favoritesService } from '../../../../api/api';
 
 interface PropertyBookingCardProps {
   property: Property;
@@ -14,6 +15,8 @@ interface PropertyBookingCardProps {
   onDownloadPDF: () => void;
   locationOption?: { id: number; name: string; description?: string } | null;
   propertyTypeInfo?: { id: string; name: string; description: string } | null;
+  initialIsFavorite?: boolean;
+  onFavoriteToggle?: (isFavorite: boolean) => void;
 }
 
 const PropertyBookingCard: React.FC<PropertyBookingCardProps> = ({ 
@@ -22,14 +25,78 @@ const PropertyBookingCard: React.FC<PropertyBookingCardProps> = ({
   isGeneratingPDF,
   onDownloadPDF,
   locationOption,
-  propertyTypeInfo
+  propertyTypeInfo,
+  initialIsFavorite = false,
+  onFavoriteToggle
 }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
 
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-    // Add logic to save to user's favorites
+  // Ensure we have the property ID as a number
+  const propertyId = typeof property.id === 'string' ? parseInt(property.id) : property.id;
+  
+  // Check favorite status on mount if not provided
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      try {
+        console.log(`Checking favorite status for property ${propertyId} in PropertyBookingCard`);
+        const favorited = await favoritesService.isPropertyFavorited(propertyId);
+        console.log(`Property ${propertyId} favorite status:`, favorited);
+        setIsFavorite(favorited);
+      } catch (error) {
+        console.error('Error checking favorite status:', error);
+      }
+    };
+    
+    if (initialIsFavorite === false) {
+      checkFavoriteStatus();
+    }
+  }, [propertyId, initialIsFavorite]);
+
+  // Update when prop changes
+  useEffect(() => {
+    setIsFavorite(initialIsFavorite);
+  }, [initialIsFavorite]);
+
+  const toggleFavorite = async () => {
+    if (isFavoriteLoading) return;
+    
+    setIsFavoriteLoading(true);
+    try {
+      console.log(`Toggling favorite for property ${propertyId}. Current status: ${isFavorite ? 'favorited' : 'not favorited'}`);
+      
+      if (isFavorite) {
+        await favoritesService.removeFromFavorites(propertyId);
+        console.log(`Removed property ${propertyId} from favorites`);
+        // Use toast if available
+        if (typeof toast?.success === 'function') {
+          toast.success('Removed from favorites');
+        }
+      } else {
+        await favoritesService.addToFavorites(propertyId);
+        console.log(`Added property ${propertyId} to favorites`);
+        // Use toast if available
+        if (typeof toast?.success === 'function') {
+          toast.success('Added to favorites');
+        }
+      }
+      
+      const newFavoriteStatus = !isFavorite;
+      setIsFavorite(newFavoriteStatus);
+      
+      // Call parent callback if provided
+      if (onFavoriteToggle) {
+        onFavoriteToggle(newFavoriteStatus);
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      if (typeof toast?.error === 'function') {
+        toast.error('Failed to update favorites');
+      }
+    } finally {
+      setIsFavoriteLoading(false);
+    }
   };
   
   const handleOpenModal = () => {
@@ -90,9 +157,14 @@ const PropertyBookingCard: React.FC<PropertyBookingCardProps> = ({
         <div className="flex gap-2 mb-3">
           <button 
             onClick={toggleFavorite}
-            className="flex-1 py-3 border border-custom-terra text-custom-terra rounded-lg font-medium hover:bg-custom-cream/30 transition-colors flex items-center justify-center gap-2"
+            disabled={isFavoriteLoading}
+            className="flex-1 py-3 border border-custom-terra text-custom-terra rounded-lg font-medium hover:bg-custom-cream/30 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            {isFavorite ? (
+            {isFavoriteLoading ? (
+              <>
+                <FaSpinner className="animate-spin" /> Loading...
+              </>
+            ) : isFavorite ? (
               <>
                 <FaHeart /> Saved
               </>
