@@ -235,11 +235,47 @@ export const heroService = {
   }
 };
 
+// Update user service with proper login checks
+export const userService = {
+  // Check if user is logged in (returns true only if a user ID exists)
+  isLoggedIn(): boolean {
+    const userId = localStorage.getItem('current_user_id');
+    return userId !== null && userId !== undefined;
+  },
+  
+  // Get current user ID (returns null if not logged in)
+  getCurrentUserId(): number | null {
+    // For now, let's use localStorage to simulate different users
+    const userId = localStorage.getItem('current_user_id');
+    if (!userId) {
+      // Return null instead of defaulting to user ID 2
+      return null;
+    }
+    return parseInt(userId);
+  },
+  
+  setCurrentUserId(userId: number): void {
+    localStorage.setItem('current_user_id', userId.toString());
+  },
+  
+  logout(): void {
+    localStorage.removeItem('current_user_id');
+  }
+};
+
 export const favoritesService = {
   async getFavorites(): Promise<Property[]> {
     try {
       console.log('Fetching favorites...');
-      const response = await fetch(`${API_URL}/favorites.php`);
+      const userId = userService.getCurrentUserId();
+      
+      // Return empty array if not logged in
+      if (!userId) {
+        console.log('No user logged in, returning empty favorites');
+        return [];
+      }
+      
+      const response = await fetch(`${API_URL}/favorites.php?user_id=${userId}`);
       const data = await response.json();
       
       console.log('Favorites API response:', data);
@@ -257,6 +293,12 @@ export const favoritesService = {
   },
   
   async addToFavorites(propertyId: number): Promise<void> {
+    // Check if user is logged in first
+    const userId = userService.getCurrentUserId();
+    if (!userId) {
+      throw new Error('You must be logged in to save properties to your favorites');
+    }
+    
     if (!propertyId || isNaN(propertyId)) {
       console.error('Invalid property ID:', propertyId);
       throw new Error('Invalid property ID');
@@ -265,10 +307,13 @@ export const favoritesService = {
     try {
       console.log(`Adding property ${propertyId} to favorites`);
       
-      const body = JSON.stringify({ property_id: propertyId });
+      const body = JSON.stringify({ 
+        property_id: propertyId,
+        user_id: userId
+      });
       console.log('Request body:', body);
       
-      const response = await fetch(`${API_URL}/favorites.php`, {
+      const response = await fetch(`${API_URL}/favorites.php?user_id=${userId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -292,6 +337,12 @@ export const favoritesService = {
   },
   
   async removeFromFavorites(propertyId: number): Promise<void> {
+    // Check if user is logged in first
+    const userId = userService.getCurrentUserId();
+    if (!userId) {
+      throw new Error('You must be logged in to remove properties from your favorites');
+    }
+    
     if (!propertyId || isNaN(propertyId)) {
       console.error('Invalid property ID:', propertyId);
       throw new Error('Invalid property ID');
@@ -300,10 +351,13 @@ export const favoritesService = {
     try {
       console.log(`Removing property ${propertyId} from favorites`);
       
-      const body = JSON.stringify({ property_id: propertyId });
+      const body = JSON.stringify({ 
+        property_id: propertyId,
+        user_id: userId
+      });
       console.log('Request body:', body);
       
-      const response = await fetch(`${API_URL}/favorites.php`, {
+      const response = await fetch(`${API_URL}/favorites.php?user_id=${userId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { FaHeart, FaRegHeart, FaSpinner } from 'react-icons/fa';
+import { FaHeart, FaRegHeart, FaSpinner, FaUserCircle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { favoritesService } from '../../api/api';
+import { useNavigate } from 'react-router-dom';
+import { favoritesService, userService } from '../../api/api';
 
 interface FavoriteButtonProps {
   propertyId: number;
@@ -20,7 +21,9 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
 }) => {
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const [isLoading, setIsLoading] = useState(false);
-  const [notification, setNotification] = useState<{message: string} | null>(null);
+  const [notification, setNotification] = useState<{message: string, type?: 'success' | 'error' | 'info'} | null>(null);
+  const navigate = useNavigate();
+  const isLoggedIn = userService.isLoggedIn();
 
   // Log for debugging
   useEffect(() => {
@@ -39,8 +42,8 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
   };
 
   // Show a notification message
-  const showNotification = (message: string) => {
-    setNotification({ message });
+  const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setNotification({ message, type });
     // Hide notification after 2 seconds
     setTimeout(() => {
       setNotification(null);
@@ -50,13 +53,24 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
   const handleToggleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Check if user is logged in
+    if (!isLoggedIn) {
+      showNotification('Please log in to save favorites', 'info');
+      
+      // Redirect to login page after a short delay
+      setTimeout(() => {
+        navigate('/login', { state: { returnTo: window.location.pathname, action: 'favorite' } });
+      }, 1500);
+      return;
+    }
 
     if (isLoading) return;
     
     // Check for valid property ID
     if (!propertyId || isNaN(propertyId)) {
       console.error('Invalid property ID in FavoriteButton:', propertyId);
-      showNotification('Error: Invalid property ID');
+      showNotification('Error: Invalid property ID', 'error');
       return;
     }
 
@@ -80,7 +94,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
       }
     } catch (error) {
       console.error('Error toggling favorite:', error);
-      showNotification('Failed to update favorites');
+      showNotification('Failed to update favorites', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -94,11 +108,13 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
         onClick={handleToggleFavorite}
         className={`rounded-full bg-white shadow-md hover:shadow-lg transition-shadow ${sizeClasses[size]} ${className}`}
         disabled={isLoading}
-        aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
-        data-property-id={propertyId} // Add data attribute for debugging
+        aria-label={!isLoggedIn ? "Log in to add to favorites" : isFavorite ? "Remove from favorites" : "Add to favorites"}
+        data-property-id={propertyId}
       >
         {isLoading ? (
           <FaSpinner className="animate-spin text-custom-terra" />
+        ) : !isLoggedIn ? (
+          <FaUserCircle className="text-custom-charcoal hover:text-custom-terra transition-colors" />
         ) : isFavorite ? (
           <FaHeart className="text-custom-terra transition-colors" />
         ) : (
@@ -106,9 +122,12 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
         )}
       </motion.button>
       
-      {/* Simple notification */}
+      {/* Enhanced notification with type-based styling */}
       {notification && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-md shadow-md text-white bg-green-500">
+        <div className={`fixed top-4 right-4 z-50 px-4 py-2 rounded-md shadow-md text-white ${
+          notification.type === 'error' ? 'bg-red-500' : 
+          notification.type === 'info' ? 'bg-blue-500' : 'bg-green-500'
+        }`}>
           {notification.message}
         </div>
       )}

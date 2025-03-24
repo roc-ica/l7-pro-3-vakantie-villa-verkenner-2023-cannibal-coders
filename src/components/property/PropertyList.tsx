@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaMapMarkerAlt, FaStar, FaBed, FaBath, FaUsers, FaRegHeart, FaHeart, FaHome, FaRulerCombined, FaWifi, FaSpinner } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaStar, FaBed, FaBath, FaUsers, FaRegHeart, FaHeart, FaHome, FaWifi, FaSpinner, FaUserCircle } from 'react-icons/fa';
 import { Property, PropertyStatus } from '../../types/property';
 import { formatPrice, getStatusColor } from '../../utils/formatters';
-import { formatImageUrl, getPlaceholderForType } from '../../utils/imageUtils'; // Import the image utilities
-import { favoritesService } from '../../api/api';
+import { formatImageUrl, getPlaceholderForType } from '../../utils/imageUtils';
+import { favoritesService, userService } from '../../api/api';
 import MapView from './MapView';
 
 interface PropertyListProps {
@@ -18,12 +18,17 @@ const PropertyCard: React.FC<{ property: Property; index: number }> = ({ propert
   const [isLoading, setIsLoading] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const navigate = useNavigate();
+  const isLoggedIn = userService.isLoggedIn();
   
   // Ensure property ID is a number
   const propertyId = typeof property.id === 'string' ? parseInt(property.id) : property.id;
   
-  // Check if property is favorited when component mounts
+  // Check if property is favorited when component mounts (only if logged in)
   useEffect(() => {
+    if (!isLoggedIn) return; // Skip if not logged in
+    
     const checkFavoriteStatus = async () => {
       try {
         const favorited = await favoritesService.isPropertyFavorited(propertyId);
@@ -34,11 +39,21 @@ const PropertyCard: React.FC<{ property: Property; index: number }> = ({ propert
     };
     
     checkFavoriteStatus();
-  }, [propertyId]);
+  }, [propertyId, isLoggedIn]);
   
   const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Check if user is logged in
+    if (!isLoggedIn) {
+      // Show login prompt
+      setShowLoginPrompt(true);
+      
+      // Hide prompt after 3 seconds
+      setTimeout(() => setShowLoginPrompt(false), 3000);
+      return;
+    }
     
     if (isLoading) return;
     
@@ -57,6 +72,12 @@ const PropertyCard: React.FC<{ property: Property; index: number }> = ({ propert
     } finally {
       setIsLoading(false);
     }
+  };
+  
+  const navigateToLogin = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate('/login', { state: { returnTo: window.location.pathname } });
   };
 
   // Extract property amenities for display
@@ -122,14 +143,35 @@ const PropertyCard: React.FC<{ property: Property; index: number }> = ({ propert
             {/* Overlay gradient on hover */}
             <div className="absolute inset-0 bg-gradient-to-t from-custom-dark/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             
-            {/* Favorite Button - Updated with loading state */}
+            {/* Login prompt that appears when non-logged in user clicks favorite */}
+            {showLoginPrompt && (
+              <div className="absolute top-12 right-2 z-20 bg-white p-4 rounded-lg shadow-md text-sm w-64">
+                <p className="text-custom-dark mb-2 font-medium">
+                  Members-Only Feature
+                </p>
+                <p className="text-custom-charcoal mb-3 text-xs">
+                  Please log in to save properties to your favorites
+                </p>
+                <button
+                  onClick={navigateToLogin}
+                  className="bg-custom-terra text-white py-2 px-3 rounded text-sm w-full hover:bg-custom-terra/90"
+                >
+                  Log in / Sign up
+                </button>
+              </div>
+            )}
+            
+            {/* Favorite Button - Updated with login indication */}
             <button 
               onClick={handleFavoriteClick}
               disabled={isLoading}
               className="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-full shadow-lg transition-colors z-10"
+              aria-label={!isLoggedIn ? "Log in to save to favorites" : (isFavorite ? "Remove from favorites" : "Save to favorites")}
             >
               {isLoading ? (
                 <FaSpinner className="animate-spin text-custom-terra" />
+              ) : !isLoggedIn ? (
+                <FaUserCircle className="text-custom-charcoal group-hover:text-custom-terra transition-colors" />
               ) : isFavorite ? (
                 <FaHeart className="text-custom-terra" />
               ) : (

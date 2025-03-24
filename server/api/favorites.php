@@ -15,19 +15,45 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Simulate authentication for now
-// In a real app, you would use proper authentication
+// Get user ID from request or authentication
 function getCurrentUserId() {
-    // For demo purposes, return user ID 2 (regular user from DB setup)
-    return 2;
+    // Check for user_id in query string
+    if (isset($_GET['user_id']) && is_numeric($_GET['user_id'])) {
+        return (int) $_GET['user_id'];
+    }
+    
+    // Check for user_id in request body (for POST/DELETE)
+    $data = json_decode(file_get_contents("php://input"), true);
+    if (isset($data['user_id']) && is_numeric($data['user_id'])) {
+        return (int) $data['user_id'];
+    }
+    
+    // Check for session-based authentication (if you implement it)
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+    
+    if (isset($_SESSION['user_id'])) {
+        return (int) $_SESSION['user_id'];
+    }
+    
+    // IMPORTANT: Return null if no valid user ID is found
+    return null;
 }
 
 try {
     $userId = getCurrentUserId();
     
+    // Require authentication for all favorite operations
+    if ($userId === null) {
+        http_response_code(401);
+        echo json_encode(['status' => 'error', 'message' => 'Authentication required']);
+        exit;
+    }
+    
     // Log request data
     $requestMethod = $_SERVER['REQUEST_METHOD'];
-    error_log("Favorites API called with method: $requestMethod");
+    error_log("Favorites API called with method: $requestMethod for user: $userId");
 
     // GET: Fetch user's favorites
     if ($requestMethod === 'GET') {
