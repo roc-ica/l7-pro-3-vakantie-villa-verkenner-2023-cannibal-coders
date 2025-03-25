@@ -73,8 +73,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         
         // Store user in localStorage and state
-        localStorage.setItem('user', JSON.stringify(data.user));
-        setUser(data.user);
+        if (data.user && data.user.id) {
+          localStorage.setItem('user', JSON.stringify(data.user));
+          // Add this line to maintain consistency with userService:
+          localStorage.setItem('current_user_id', data.user.id.toString());
+          setUser(data.user);
+        }
         
       } catch (apiError) {
         console.error('API Error:', apiError);
@@ -93,6 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           };
           
           localStorage.setItem('user', JSON.stringify(adminUser));
+          localStorage.setItem('current_user_id', adminUser.id.toString());
           setUser(adminUser);
           return;
         }
@@ -107,6 +112,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           };
           
           localStorage.setItem('user', JSON.stringify(regularUser));
+          localStorage.setItem('current_user_id', regularUser.id.toString());
           setUser(regularUser);
           return;
         }
@@ -153,6 +159,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('current_user_id');
     setUser(null);
   };
 

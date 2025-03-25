@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUser, FaHeart, FaBars, FaTimes, FaSignOutAlt, FaShieldAlt } from 'react-icons/fa';
+import { FaUser, FaBars, FaTimes, FaSignOutAlt, FaShieldAlt } from 'react-icons/fa';
 
 const Navbar: React.FC = () => {
   
@@ -116,10 +116,6 @@ const Navbar: React.FC = () => {
                       <FaUser className="mr-2 text-custom-terra" />
                       My Account
                     </Link>
-                    <Link to="/favorites" className="flex items-center px-4 py-2 text-custom-dark hover:bg-custom-cream rounded-md">
-                      <FaHeart className="mr-2 text-custom-terra" />
-                      Favorites
-                    </Link>
                     
                     {/* Admin Dashboard Link - Only shown for admins */}
                     {isAdmin() && (
@@ -218,12 +214,6 @@ const Navbar: React.FC = () => {
                     className="block px-3 py-2 rounded-md text-custom-dark hover:bg-custom-cream/50"
                   >
                     My Account
-                  </Link>
-                  <Link 
-                    to="/favorites" 
-                    className="block px-3 py-2 rounded-md text-custom-dark hover:bg-custom-cream/50"
-                  >
-                    Favorites
                   </Link>
                   <button 
                     onClick={handleLogout}

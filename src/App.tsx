@@ -54,6 +54,7 @@ const App: React.FC = () => {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/property/:id" element={<PropertyDetailsPage />} />
             <Route path="/account" element={<UserPage />} />
+            {/* Remove favorites route */}
             
             {/* Admin routes (protected) */}
             <Route path="/admin/*" element={
