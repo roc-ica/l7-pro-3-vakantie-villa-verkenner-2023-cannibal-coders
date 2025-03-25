@@ -12,6 +12,7 @@ const EditPropertyPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState<{ [key: string]: string | boolean | number | File }>({});
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -30,6 +31,16 @@ const EditPropertyPage: React.FC = () => {
 
     fetchProperty();
   }, [id]);
+
+  // Update this function to handle both string and boolean values
+  const handleInputChange = (e: { target: { name: string; value: string | boolean | number | File } }) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   const handleUpdateProperty = async (formData: FormData) => {
     try {
       setIsSubmitting(true);

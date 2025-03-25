@@ -38,6 +38,11 @@ const buildQueryString = (filters: PropertyFilter): string => {
     params.append('min_capacity', filters.capacity.toString());
   }
 
+  // Add featured filter
+  if (filters.featured !== undefined) {
+    params.append('featured', filters.featured ? '1' : '0');
+  }
+
   // Log the query string for debugging
   console.log('Query params:', params.toString());
 

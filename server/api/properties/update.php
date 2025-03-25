@@ -70,6 +70,9 @@ try {
         error_log("No location_option_id provided or empty value received");
     }
     
+    // Handle the featured field
+    $featured = isset($_POST['featured']) ? (int)$_POST['featured'] : 0;
+    
     // Start image URL with existing value
     $image_url = $existingProperty['image_url'];
     
@@ -123,7 +126,7 @@ try {
     // Begin transaction
     $pdo->beginTransaction();
     
-    // Update property - NOW INCLUDING LOCATION_OPTION_ID
+    // Update property - NOW INCLUDING LOCATION_OPTION_ID AND FEATURED
     $stmt = $pdo->prepare("
         UPDATE properties SET
             name = :name,
@@ -139,7 +142,9 @@ try {
             image_url = :image_url,
             property_type = :property_type,
             status = :status,
-            location_option_id = :location_option_id
+            location_option_id = :location_option_id,
+            featured = :featured,
+            updated_at = NOW()
         WHERE id = :id
     ");
     
@@ -157,6 +162,7 @@ try {
     $stmt->bindParam(':property_type', $property_type);
     $stmt->bindParam(':status', $status);
     $stmt->bindParam(':location_option_id', $location_option_id, PDO::PARAM_INT);
+    $stmt->bindParam(':featured', $featured, PDO::PARAM_INT);
     $stmt->bindParam(':id', $id);
     
     $stmt->execute();

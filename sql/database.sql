@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS properties (
     status ENUM('available', 'sold', 'pending') DEFAULT 'available',
     property_type ENUM('apartment', 'house', 'villa', 'cabin', 'tent', 'loft') DEFAULT 'villa',
     location_option_id INT,
+    featured BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (location_option_id) REFERENCES location_options(id) ON DELETE SET NULL
 );

@@ -84,6 +84,12 @@ try {
         }
     }
     
+    // Add filter for featured properties
+    if (isset($_GET['featured'])) {
+        $where[] = "p.featured = :featured";
+        $params[':featured'] = (int)$_GET['featured'];
+    }
+    
     if (!empty($where)) {
         $query .= " WHERE " . implode(" AND ", $where);
     }

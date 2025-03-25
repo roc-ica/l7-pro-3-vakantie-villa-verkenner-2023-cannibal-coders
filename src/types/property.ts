@@ -37,6 +37,7 @@ export interface Property {
   property_type: PropertyType;
   updated_at?: string;
   location_option?: LocationOption;
+  featured?: boolean;
 }
 
 export interface PropertyFilter {
@@ -55,6 +56,7 @@ export interface PropertyFilter {
   propertyType?: string;
   status?: PropertyStatus;
   locationOptionId?: number;
+  featured?: boolean;
 }
 
 export interface PropertyListProps {
