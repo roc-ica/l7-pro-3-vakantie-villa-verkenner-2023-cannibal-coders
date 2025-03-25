@@ -1,6 +1,6 @@
 import React from 'react';
 import HeroSection from './landing/sections/HeroSection';
-import FeaturesSection from './landing/sections/FeaturesSection';
+import FeaturesSection from './landing/sections/InfoBlocks';
 import FeaturedProperties from './landing/sections/FeaturedProperties';
 import TestimonialsSection from './landing/sections/TestimonialsSection';
 import NewsletterSection from './landing/sections/NewsletterSection';
