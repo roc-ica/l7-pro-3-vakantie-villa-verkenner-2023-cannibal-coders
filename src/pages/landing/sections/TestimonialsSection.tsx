@@ -22,7 +22,7 @@ const TestimonialsSection: React.FC = () => {
       role: "Family Traveler",
       location: "Melbourne, Australia",
       rating: 5,
-      image: "https://source.unsplash.com/400x400/?woman,portrait",
+      image: "https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHBlcnNvbnxlbnwwfHwwfHx8MA%3D%3D",
       propertyName: "Coastal Paradise Villa"
     },
     {
@@ -32,7 +32,7 @@ const TestimonialsSection: React.FC = () => {
       role: "Business Traveler",
       location: "Sydney, Australia",
       rating: 4.5,
-      image: "https://source.unsplash.com/400x400/?man,portrait",
+      image: "https://images.unsplash.com/photo-1500048993953-d23a436266cf?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fHBlcnNvbnxlbnwwfHwwfHx8MA%3D%3D",
       propertyName: "Mountain Chalet Retreat"
     },
     {
@@ -42,7 +42,7 @@ const TestimonialsSection: React.FC = () => {
       role: "Couple",
       location: "Brisbane, Australia",
       rating: 5,
-      image: "https://source.unsplash.com/400x400/?couple,portrait",
+      image: "https://images.unsplash.com/photo-1500259783852-0ca9ce8a64dc?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjR8fHBlcnNvbnxlbnwwfHwwfHx8MA%3D%3D",
       propertyName: "City Skyline Penthouse"
     }
   ];
