@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
-  FaTachometerAlt, FaHome, FaUsers, FaCalendarAlt, 
+  FaTachometerAlt, FaHome, FaUsers, FaTicketAlt, 
   FaImages, FaCog, FaBars, FaTimes, FaSignOutAlt,
   FaChevronDown, FaChevronUp, FaGlobe
 } from 'react-icons/fa';
@@ -51,9 +51,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
       ]
     },
     { 
-      path: '/admin/bookings', 
-      name: 'Bookings', 
-      icon: FaCalendarAlt 
+      path: '/admin/tickets', 
+      name: 'Customer Tickets', 
+      icon: FaTicketAlt 
     },
     { 
       id: 'content',
