@@ -54,140 +54,104 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-custom-cream py-12 px-4">
-      <motion.div 
-        className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="text-center">
-          <h2 className="mt-6 text-3xl font-bold text-custom-dark">Welcome Back</h2>
-          <p className="mt-2 text-sm text-custom-charcoal">Sign in to access your account</p>
+    <div className="min-h-screen flex" style={{ backgroundColor: '#E5E5DD' }}>
+      {/* Left side - Image */}
+      <div className="hidden lg:block lg:w-1/2 bg-cover bg-center" 
+           style={{ backgroundImage: "url('https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?auto=format&fit=crop&w=1600&q=80')" }}>
+        {/* Australian landscape image */}
+        <div className="h-full w-full bg-black bg-opacity-30 flex items-center justify-center">
+          <div className="text-white text-5xl font-bold px-12">Australian Villa Getaways</div>
         </div>
-
-        {/* Demo Account Info Box */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-start">
-            <FaInfoCircle className="text-blue-500 mt-1 mr-3 flex-shrink-0" />
-            <div>
-              <h3 className="text-blue-800 font-medium">Demo Accounts</h3>
-              <p className="text-blue-700 text-sm mt-1">
-                You can use the following accounts for testing:
-              </p>
-              <div className="mt-3 space-y-2">
-                <button 
-                  onClick={loginAsAdmin}
-                  className="flex items-center text-xs bg-blue-100 hover:bg-blue-200 text-blue-800 py-1 px-2 rounded transition-colors w-full"
-                >
-                  <FaShieldAlt className="mr-1" /> 
-                  <span className="font-medium">Admin:</span> 
-                  <span className="ml-1">admin@example.com / password123</span>
-                </button>
-                <button 
-                  onClick={loginAsUser}
-                  className="flex items-center text-xs bg-green-100 hover:bg-green-200 text-green-800 py-1 px-2 rounded transition-colors w-full"
-                >
-                  <FaUser className="mr-1" /> 
-                  <span className="font-medium">User:</span> 
-                  <span className="ml-1">user@example.com / password123</span>
-                </button>
-              </div>
-            </div>
+      </div>
+      
+      {/* Right side - Login Form */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-8">
+        <div className="max-w-md w-full">
+          <div className="text-center mb-10">
+            <h2 className="text-4xl font-serif" style={{ color: '#171D26' }}>LOGIN</h2>
           </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          {(validationError || error) && (
-            <div className="bg-red-50 text-red-700 p-3 rounded-md text-sm border border-red-100">
-              {validationError || error}
-            </div>
-          )}
           
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-custom-charcoal mb-1">
-                Email Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaEnvelope className="h-5 w-5 text-custom-terra" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-custom-terra focus:border-custom-terra"
-                  placeholder="Enter your email"
-                />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {(validationError || error) && (
+              <div className="bg-red-50 text-red-700 p-3 rounded-md text-sm border border-red-100">
+                {validationError || error}
               </div>
+            )}
+            
+            <div>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="block w-full py-3 px-3 text-white rounded-lg border-2"
+                style={{ 
+                  backgroundColor: '#ffff', 
+                  borderColor: '#586159',
+                  outlineColor: '#A6685B'
+                }}
+                placeholder="Email"
+              />
             </div>
             
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-custom-charcoal mb-1">
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaLock className="h-5 w-5 text-custom-terra" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-custom-terra focus:border-custom-terra"
-                  placeholder="Enter your password"
-                />
-              </div>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="block w-full py-3 px-3 text-white rounded-lg border-2"
+                style={{ 
+                  backgroundColor: '#ffff', 
+                  borderColor: '#586159',
+                  outlineColor: '#A6685B'
+                }}
+                placeholder="Password"
+              />
             </div>
-          </div>
-
-          <div className="flex items-center justify-between">
+            
             <div className="flex items-center">
               <input
-                id="remember_me"
-                name="remember_me"
+                id="remember"
+                name="remember"
                 type="checkbox"
-                className="h-4 w-4 text-custom-terra focus:ring-custom-terra border-gray-300 rounded"
+                defaultChecked={true}
+                className="h-4 w-4 border-gray-300 rounded"
+                style={{ 
+                  accentColor: '#A6685B'
+                }}
               />
-              <label htmlFor="remember_me" className="ml-2 block text-sm text-custom-charcoal">
+              <label htmlFor="remember" className="ml-2 block text-sm" style={{ color: '#626265' }}>
                 Remember me
               </label>
             </div>
 
-            <div className="text-sm">
-              <a href="#" className="font-medium text-custom-terra hover:text-custom-sage">
-                Forgot your password?
-              </a>
+            <div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-1/3 ml-auto flex justify-center py-3 px-4 border-0 rounded-lg text-white transition-colors"
+                style={{ 
+                  backgroundColor: '#A6685B',
+                  opacity: loading ? '0.7' : '1'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#8a574b'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#A6685B'}
+              >
+                {loading ? 'Signing in...' : 'Sign in'}
+              </button>
             </div>
-          </div>
-
-          <div>
-            <motion.button
-              type="submit"
-              disabled={loading}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-custom-terra hover:bg-custom-sage focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-terra disabled:opacity-70 transition-colors"
-            >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </motion.button>
-          </div>
-        </form>
-        
-        <div className="text-center mt-4">
-          <p className="text-sm text-custom-charcoal">
-            Don't have an account?{' '}
-            <Link to="/register" className="font-medium text-custom-terra hover:text-custom-sage">
-              Sign up
-            </Link>
-          </p>
+          </form>
+          
+          {/* <div className="flex justify-between items-center mt-6">
+            <Link to="/search" className="hover:underline" style={{ color: '#586159' }}>Search</Link>
+            <Link to="/properties" className="hover:underline" style={{ color: '#586159' }}>Properties</Link>
+            <Link to="/register" className="hover:underline" style={{ color: '#586159' }}>Register</Link>
+          </div> */}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
