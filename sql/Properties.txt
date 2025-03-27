@@ -1,0 +1,210 @@
+**Noorwegen:**
+1. **Fjord Retreat**
+   - Locatie: Geirangerfjord
+   - Adres: Fjordveien 123, Geiranger
+   - Capaciteit: 6 personen
+   - Prijs: €300.000
+   - Omschrijving: Moderne blokhut met panoramisch uitzicht op de majestueuze Geirangerfjord. Dicht bij een bos en aan het water.
+
+2. **Bergtop Haven**
+   - Locatie: Jotunheimen National Park
+   - Adres: Toppenweg 456, Lom
+   - Capaciteit: 8 personen
+   - Prijs: €150.0000
+   - Omschrijving: Ruime bergwoning met directe toegang tot wandelpaden. Inclusief overname inventaris.
+
+3. **Lakeside Cabin**
+   - Locatie: Telemark
+   - Adres: Vatnavn 789, Kragerø
+   - Capaciteit: 4 personen
+   - Prijs: €100.000
+   - Omschrijving: Gezellige blokhut aan een idyllisch meer, perfect voor natuurliefhebbers. Op een privépark.
+
+**Marokko:**
+1. **Atlas Oasis Villa**
+   - Locatie: Marrakech
+   - Adres: Palmeraie Road, Marrakech
+   - Capaciteit: 8 personen
+   - Prijs: €110.000
+   - Omschrijving: Traditionele villa met uitzicht op het Atlasgebergte. Zwembad op het park en winkel op het park.
+
+2. **Sahara Nomad Tent**
+   - Locatie: Erg Chebbi Desert
+   - Adres: Desert Dunes, Merzouga
+   - Capaciteit: 4 personen
+   - Prijs: €80.000
+   - Omschrijving: Authentieke nomadentent in de Sahara. Unieke ervaring met sterrenhemel boven de woestijn.
+
+3. **Kasbah Hideaway**
+   - Locatie: Skoura Oasis
+   - Adres: Kasbah Lane, Skoura
+   - Capaciteit: 6 personen
+   - Prijs: €195.000
+   - Omschrijving: Charmante kasbah te midden van palmbomen. Entertainment op het park met traditionele muziek en dans.
+
+**Nederland:**
+1. **Waterfront Haven**
+   - Locatie: Zeeland
+   - Adres: Havenstraat 89, Zeeland
+   - Capaciteit: 6 personen
+   - Prijs: €360.000
+   - Omschrijving: Moderne woning aan het water met eigen aanlegsteiger. Perfect voor liefhebbers van watersport en rust.
+
+2. **Duneview Cottage**
+   - Locatie: Texel
+   - Adres: Duinweg 567, Texel
+   - Capaciteit: 5 personen
+   - Prijs: €810.000
+   - Omschrijving: Gezellig huisje met uitzicht op de duinen. Winkel op het park en entertainment in de buurt.
+
+3. **City Loft**
+   - Locatie: Amsterdam
+   - Adres: Keizersgracht 789, Amsterdam
+   - Capaciteit: 4 personen
+   - Prijs: €1.180.000
+   - Omschrijving: Stijlvol appartement in het hart van Amsterdam. Dicht bij een stad en winkels op het park.
+
+**Duitsland:**
+1. **Black Forest Chalet**
+   - Locatie: Zwarte Woud
+   - Adres: Waldweg 555, Zwarte Woud
+   - Capaciteit: 8 personen
+   - Prijs: €170.000
+   - Omschrijving: Ruime woning te midden van dichte bossen. Wandelpaden, mountainbikeroutes en rustige omgeving.
+
+2. **Bavarian Lakeside**
+   - Locatie: Tegernsee
+   - Adres: Seepromenade 101, Tegernsee
+   - Capaciteit: 6 personen
+   - Prijs: €240.000
+   - Omschrijving: Traditioneel duits chalet aan de oever van het meer. Zwembad op het park en winkel op het park.
+
+3. **Rhine Valley Vineyard Cottage**
+   - Locatie: Rüdesheim am Rhein
+   - Adres: Weinbergstraße 123, Rüdesheim am Rhein
+   - Capaciteit: 5 personen
+   - Prijs: €125.000
+   - Omschrijving: Sfeervol huisje in de wijngaarden in duitsland. Entertainment op het park met wijnproeverijen.
+
+**Turkije:**
+1. **Turquoise Coast Villa**
+   - Locatie: Fethiye
+   - Adres: Sahil Caddesi 456, Fethiye
+   - Capaciteit: 7 personen
+   - Prijs: €230.000
+   - Omschrijving: Villa met uitzicht op de Turquoise Kust. Zwembad op het park en dicht bij de zee.
+
+2. **Cappadocia Cave House**
+   - Locatie: Göreme
+   - Adres: Kaya Sokak 789, Göreme
+   - Capaciteit: 4 personen
+   - Prijs: €95.000
+   - Omschrijving: Uniek grottenhuis in het betoverende Cappadocië. Nabijheid van historische bezienswaardigheden en winkels op het park.
+
+3. **Bodrum Beach Bungalow**
+   - Locatie: Bodrum
+   - Adres: Plaj Caddesi 101, Bodrum
+   - Capaciteit: 6 personen
+   - Prijs: €160.000
+   - Omschrijving: Bungalow aan het strand met uitzicht op de Egeïsche Zee. Entertainment op het park en dicht bij een stad.
+
+**Spanje:**
+1. **Costa del Sol Penthouse**
+   - Locatie: Marbella
+   - Adres: Paseo Marítimo 555, Marbella
+   - Capaciteit: 5 personen
+   - Prijs: €200.000
+   - Omschrijving: Luxe penthouse aan de Costa del Sol. Zwembad op het park en dicht bij de zee.
+
+2. **Ibiza Cliff Villa**
+   - Locatie: Ibiza
+   - Adres: Acantilado 321, Ibiza
+   - Capaciteit: 8 personen
+   - Prijs: €180.000
+   - Omschrijving: Exclusieve villa op de kliffen van Ibiza. Privéterras en entertainment op het park.
+
+3. **Barcelona Urban Loft**
+   - Locatie: Barcelona
+   - Adres: Rambla de Catalunya 789, Barcelona
+   - Capaciteit: 4 personen
+   - Prijs: €150.000
+   - Omschrijving: Modern loft in het hart van Barcelona. Dicht bij een stad en winkels op het park.
+
+**Oostenrijk:**
+1. **Alpine Chalet**
+   - Locatie: Tirol
+   - Adres: Alpenweg 123, Innsbruck
+   - Capaciteit: 6 personen
+   - Prijs: €140.000
+   - Omschrijving: Traditioneel chalet te midden van de Alpen. Wandelpaden en skigebieden in de buurt. Inclusief overname inventaris.
+
+2. **Salzkammergut Lake House**
+   - Locatie: Hallstatt
+   - Adres: Seeweg 456, Hallstatt
+   - Capaciteit: 5 personen
+   - Prijs: €160.000
+   - Omschrijving: Huis aan de oevers van de schilderachtige Hallstätter See. Zwembad op het park en entertainment in de buurt.
+
+3. **Vienna City Apartment**
+   - Locatie: Wenen
+   - Adres: Ringstraße 789, Wenen
+   - Capaciteit: 4 personen
+   - Prijs: €180.000
+   - Omschrijving: Stijlvol appartement in het centrum van Wenen. Dicht bij een stad en winkels op het park.
+
+**Australië:**
+1. **Gold Coast Luxury Condo**
+   - **Locatie:** Gold Coast
+   - **Adres:** Surfers Paradise Blvd 202, Gold Coast
+   - **Capaciteit:** 4 personen
+   - **Prijs:** €1.100.000
+   - **Omschrijving:** Luxe appartement met uitzicht op het strand van Surfers Paradise. Dicht bij uitgaansgelegenheden en restaurants.
+
+2. **Canberra Country Estate**
+   - **Locatie:** Canberra
+   - **Adres:** Country Road 789, Canberra
+   - **Capaciteit:** 8 personen
+   - **Prijs:** €1.500.000
+   - **Omschrijving:** Uitgestrekt landgoed met moderne voorzieningen en een groot zwembad. Perfect voor gezinnen die van ruimte en luxe houden.
+
+3. **Tasmanian Wilderness Lodge**
+   - **Locatie:** Tasmania
+   - **Adres:** Wilderness Road 456, Tasmania
+   - **Capaciteit:** 6 personen
+   - **Prijs:** €900.000
+   - **Omschrijving:** Lodge te midden van de ongerepte natuur van Tasmanië. Ideaal voor natuurliefhebbers en avonturiers.
+
+4. **Sydney Harbour View Apartment**
+   - **Locatie:** Sydney
+   - **Adres:** Circular Quay 101, Sydney
+   - **Capaciteit:** 4 personen
+   - **Prijs:** €1.200.000
+   - **Omschrijving:** Luxe appartement met uitzicht op de iconische Sydney Harbour Bridge en het Opera House. Dicht bij winkels en restaurants.
+
+5. **Melbourne City Loft**
+   - **Locatie:** Melbourne
+   - **Adres:** Collins Street 789, Melbourne
+   - **Capaciteit:** 3 personen
+   - **Prijs:** €850.000
+   - **Omschrijving:** Modern loft in het hart van Melbourne. Perfect voor stedelijke professionals, met gemakkelijke toegang tot openbaar vervoer en uitgaansgelegenheden.
+
+6. **Brisbane Riverside Villa**
+   - **Locatie:** Brisbane
+   - **Adres:** Riverside Drive 456, Brisbane
+   - **Capaciteit:** 6 personen
+   - **Prijs:** €950.000
+   - **Omschrijving:** Ruime villa aan de rivier met een prachtig uitzicht en een privézwembad. Ideaal voor gezinnen die van een rustige omgeving houden.
+
+7. **Perth Beach House**
+   - **Locatie:** Perth
+   - **Adres:** Ocean Drive 123, Perth
+   - **Capaciteit:** 5 personen
+   - **Prijs:** €780.000
+   - **Omschrijving:** Charmant strandhuis met directe toegang tot het strand. Perfect voor liefhebbers van zon, zee en strandactiviteiten.
+
+8. **Adelaide Hills Retreat**
+   - **Locatie:** Adelaide
+   - **Adres:** Hillside Road 789, Adelaide
+   - **Capaciteit:** 4 personen
+   - **Prijs:** €620.000
+   - **Omschrijving:** Gezellige woning in de Adelaide Hills, omgeven door natuur. Ideaal voor een rustige en ontspannen levensstijl.
