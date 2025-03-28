@@ -18,6 +18,7 @@ import CreatePropertyPage from './pages/admin/properties/CreatePropertyPage';
 import EditPropertyPage from './pages/admin/properties/EditPropertyPage';
 import AdminRequireAuth from './components/admin/AdminRequireAuth';
 import FeaturedPropertiesPage from './pages/admin/properties/FeaturedPropertiesPage';
+import AdminTicketsPage from './pages/admin/AdminTicketsPage';
 
 // Layout wrapper that conditionally renders navbar and footer
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
@@ -66,6 +67,7 @@ const App: React.FC = () => {
                   <Route path="properties/featured" element={<FeaturedPropertiesPage />} />
                   <Route path="properties/create" element={<CreatePropertyPage />} />
                   <Route path="properties/edit/:id" element={<EditPropertyPage />} />
+                  <Route path="tickets" element={<AdminTicketsPage />} />
                   {/* Add more admin routes as needed */}
                 </Routes>
               </AdminRequireAuth>
