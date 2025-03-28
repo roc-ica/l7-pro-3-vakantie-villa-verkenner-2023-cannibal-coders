@@ -3,38 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import AdminLayout from '../../../components/admin/AdminLayout';
-import PropertyForm from './components/PropertyForm'; // Fixed import path
+// Update import path to use the correct component
+import PropertyForm from '../../../components/admin/properties/PropertyForm';
 import { propertyService } from '../../../api/api';
 
 const CreatePropertyPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<{ [key: string]: string | boolean | number | File }>({});
   const navigate = useNavigate();
 
-  // Update this function to handle both string and boolean values
-  const handleInputChange = (e: { target: { name: string; value: string | boolean | number | File } }) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
+  const handleSubmit = async (formData: FormData) => {
     try {
       setLoading(true);
-      
-      // Create FormData object from form state
-      const submitData = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== null && value !== undefined) {
-          submitData.append(key, value.toString());
-        }
-      });
-      
-      await propertyService.createProperty(submitData);
+      await propertyService.createProperty(formData);
       toast.success('Property created successfully!');
       navigate('/admin/properties');
     } catch (err) {
@@ -53,9 +33,9 @@ const CreatePropertyPage: React.FC = () => {
         transition={{ duration: 0.5 }}
       >
         <PropertyForm 
-          formData={formData}
-          handleInputChange={handleInputChange}
-          handleSubmit={handleSubmit}
+          onSubmit={handleSubmit}
+          isSubmitting={loading}
+          isEditing={false}
         />
       </motion.div>
     </AdminLayout>
