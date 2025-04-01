@@ -85,7 +85,7 @@ const LoginPage: React.FC = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full py-3 px-3 text-white rounded-lg border-2"
+                className="block w-full py-3 px-3 text-black rounded-lg border-2"
                 style={{ 
                   backgroundColor: '#ffff', 
                   borderColor: '#586159',
@@ -102,7 +102,7 @@ const LoginPage: React.FC = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full py-3 px-3 text-white rounded-lg border-2"
+                className="block w-full py-3 px-3 text-black rounded-lg border-2"
                 style={{ 
                   backgroundColor: '#ffff', 
                   borderColor: '#586159',
