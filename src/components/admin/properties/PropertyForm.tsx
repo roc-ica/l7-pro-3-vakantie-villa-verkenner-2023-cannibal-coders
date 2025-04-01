@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaImage, FaTrash, FaPlus } from 'react-icons/fa';
+import { FaImage, FaTrash, FaPlus, FaStar } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { Property, PropertyType, PropertyStatus } from '../../../types/property';
+import { Switch } from '@headlessui/react';
 
 // Define a LocationOption type
 interface LocationOption {
@@ -164,14 +165,19 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, isEd
       // Create FormData object to handle file uploads
       const formDataToSubmit = new FormData();
       
-      // Add all text fields - with special handling for location_option_id
+      // Add all text fields with special handling for boolean values
       Object.entries(formData).forEach(([key, value]) => {
         if (key === 'location_option_id') {
           // Explicitly convert location_option_id to string or send empty string
-          // PHP will interpret empty string as NULL for int fields
           const locationValueToSend = value ? value.toString() : '';
           console.log(`Sending ${key}:`, locationValueToSend || 'empty string');
           formDataToSubmit.append(key, locationValueToSend);
+        }
+        else if (key === 'featured') {
+          // Convert boolean to "1" or "0" for PHP
+          const featuredValue = value === true ? '1' : '0';
+          console.log(`Sending featured:`, featuredValue);
+          formDataToSubmit.append(key, featuredValue);
         }
         else if (value !== undefined && value !== null) {
           formDataToSubmit.append(key, value.toString());
@@ -294,6 +300,34 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, isEd
               )}
             </div>
           </div>
+        </div>
+
+        {/* Featured Property Option */}
+        <div className="bg-custom-cream/20 rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4 text-custom-dark">Featured Status</h2>
+          <div className="flex items-center space-x-3">
+            <Switch
+              checked={formData.featured || false}
+              onChange={(checked) => setFormData({...formData, featured: checked})}
+              className={`${
+                formData.featured ? 'bg-custom-terra' : 'bg-gray-200'
+              } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-custom-terra focus:ring-offset-2`}
+            >
+              <span
+                className={`${
+                  formData.featured ? 'translate-x-6' : 'translate-x-1'
+                } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+              />
+            </Switch>
+            <label className="text-sm font-medium text-custom-charcoal flex items-center">
+              <FaStar className="text-yellow-400 mr-2" />
+              Featured Property
+            </label>
+          </div>
+          <p className="mt-2 text-sm text-gray-500 pl-14">
+            Featured properties are displayed prominently on the homepage and in search results.
+            They receive more visibility and attract more potential guests.
+          </p>
         </div>
 
         {/* Location Section */}

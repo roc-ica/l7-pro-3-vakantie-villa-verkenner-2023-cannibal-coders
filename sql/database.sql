@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS properties (
     location_option_id INT,
     featured BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (location_option_id) REFERENCES location_options(id) ON DELETE SET NULL
 );
 
