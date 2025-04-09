@@ -240,30 +240,61 @@ export const heroService = {
   }
 };
 
-// Update user service with proper login checks
+// Updated user service to properly parse the user object from localStorage
 export const userService = {
-  // Check if user is logged in (returns true only if a user ID exists)
+  // Check if user is logged in by looking for a stored user object
   isLoggedIn(): boolean {
-    const userId = localStorage.getItem('current_user_id');
-    return userId !== null && userId !== undefined;
+    const userJson = localStorage.getItem('user');
+    const isLoggedIn = userJson !== null && userJson !== undefined;
+    console.log(`[userService] isLoggedIn: ${isLoggedIn}`);
+    return isLoggedIn;
   },
   
-  // Get current user ID (returns null if not logged in)
+  // Get current user ID from the user object in localStorage
   getCurrentUserId(): number | null {
-    // For now, let's use localStorage to simulate different users
-    const userId = localStorage.getItem('current_user_id');
-    if (!userId) {
-      // Return null instead of defaulting to user ID 2
+    try {
+      const userJson = localStorage.getItem('user');
+      if (!userJson) {
+        console.log('[userService] No user found in localStorage');
+        return null;
+      }
+      
+      const user = JSON.parse(userJson);
+      if (!user || !user.id) {
+        console.log('[userService] User object has no ID property');
+        return null;
+      }
+      
+      console.log(`[userService] getCurrentUserId returning: ${user.id}`);
+      return user.id;
+    } catch (error) {
+      console.error('[userService] Error parsing user from localStorage:', error);
       return null;
     }
-    return parseInt(userId);
   },
   
-  setCurrentUserId(userId: number): void {
-    localStorage.setItem('current_user_id', userId.toString());
+  // Set the user object in localStorage
+  setCurrentUser(user: any): void {
+    console.log('[userService] Setting user:', user);
+    localStorage.setItem('user', JSON.stringify(user));
+  },
+  
+  // Get the full user object from localStorage
+  getCurrentUser(): any | null {
+    try {
+      const userJson = localStorage.getItem('user');
+      if (!userJson) {
+        return null;
+      }
+      return JSON.parse(userJson);
+    } catch (error) {
+      console.error('[userService] Error parsing user from localStorage:', error);
+      return null;
+    }
   },
   
   logout(): void {
-    localStorage.removeItem('current_user_id');
+    console.log('[userService] Logging out, removing user');
+    localStorage.removeItem('user');
   }
 };

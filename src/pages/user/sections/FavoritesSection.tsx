@@ -27,36 +27,36 @@ const FavoritesSection: React.FC<FavoritesSectionProps> = ({ navigate }) => {
   const [favorites, setFavorites] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Load favorites from database for the current user
   useEffect(() => {
     const loadFavorites = async () => {
       try {
         setLoading(true);
-        // Get favorites without requiring user ID
-        const response = await favoritesService.getFavorites();
-        const favoriteIds = response.favorites.map((fav: any) => fav.id);
         
-        if (favoriteIds.length === 0) {
+        const userId = userService.getCurrentUserId();
+        console.log(`[FavoritesSection] Loading favorites for user ID: ${userId}`);
+        
+        // Check if user is logged in
+        if (!userService.isLoggedIn()) {
+          console.log('[FavoritesSection] User not logged in, showing empty favorites');
+          setLoading(false);
+          return;
+        }
+        
+        const response = await favoritesService.getFavorites();
+        console.log('[FavoritesSection] Favorites response:', response);
+        
+        if (!response.favorites || response.favorites.length === 0) {
+          console.log('[FavoritesSection] No favorites found');
           setLoading(false);
           return;
         }
 
-        // Fetch property details for each favorite
-        const favoriteProperties = await Promise.all(
-          favoriteIds.map(async (id: number) => {
-            try {
-              const property = await propertyService.getPropertyById(id);
-              return property;
-            } catch (error) {
-              console.error(`Error fetching property ${id}:`, error);
-              return null;
-            }
-          })
-        );
-
-        setFavorites(favoriteProperties.filter(Boolean) as Property[]);
+        // The favorites from the API already contain the complete property data
+        setFavorites(response.favorites);
         setLoading(false);
       } catch (error) {
-        console.error('Error loading favorites:', error);
+        console.error('[FavoritesSection] Error loading favorites:', error);
         setLoading(false);
       }
     };
@@ -67,9 +67,16 @@ const FavoritesSection: React.FC<FavoritesSectionProps> = ({ navigate }) => {
   // Handle removing a property from favorites
   const handleRemoveFromFavorites = async (propertyId: number) => {
     try {
-      await favoritesService.removeFromFavorites(propertyId);
-      setFavorites(favorites.filter(property => property.id !== propertyId));
-      toast.success('Removed from favorites');
+      console.log(`Removing property ${propertyId} from favorites`);
+      const response = await favoritesService.removeFromFavorites(propertyId);
+      
+      if (response.status === 'success') {
+        // Update local state to remove the property
+        setFavorites(favorites.filter(property => property.id !== propertyId));
+        toast.success('Removed from favorites');
+      } else {
+        toast.error(response.message || 'Failed to remove from favorites');
+      }
     } catch (error) {
       console.error('Error removing from favorites:', error);
       toast.error('Failed to remove from favorites');
