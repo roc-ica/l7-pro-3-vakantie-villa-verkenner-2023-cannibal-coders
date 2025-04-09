@@ -1,21 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaHeart } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { favoritesService } from '../../api/auth';
 import { userService } from '../../api/api';
+import { toast } from 'react-hot-toast';
 
 interface FavoriteButtonProps {
   propertyId: number;
   size?: 'small' | 'medium' | 'large';
   className?: string;
+  showText?: boolean;
 }
 
 const FavoriteButton: React.FC<FavoriteButtonProps> = ({
   propertyId,
   size = 'medium',
   className = '',
+  showText = false,
 }) => {
-  const navigate = useNavigate();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const sizeClasses = {
     small: 'text-lg p-1',
@@ -23,34 +27,66 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
     large: 'text-2xl p-3',
   };
 
-  // Simple notification that the feature is unavailable
-  const handleClick = (e: React.MouseEvent) => {
+  // Check initial favorite status
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      try {
+        const isInFavorites = await favoritesService.isPropertyInFavorites(propertyId);
+        setIsFavorite(isInFavorites);
+      } catch (error) {
+        console.error('Error checking favorite status:', error);
+      }
+    };
+    
+    checkFavoriteStatus();
+  }, [propertyId]);
+
+  const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Create a message in the UI
-    const notification = document.createElement('div');
-    notification.className = 'fixed top-4 right-4 z-50 px-4 py-2 rounded-md shadow-md text-white bg-blue-500';
-    notification.textContent = 'Favorites feature is currently unavailable';
-    document.body.appendChild(notification);
+    setIsLoading(true);
     
-    // Remove after 2 seconds
-    setTimeout(() => {
-      notification.remove();
-    }, 2000);
+    try {
+      if (isFavorite) {
+        await favoritesService.removeFromFavorites(propertyId);
+        toast.success('Removed from favorites');
+        setIsFavorite(false);
+      } else {
+        await favoritesService.addToFavorites(propertyId);
+        toast.success('Added to favorites');
+        setIsFavorite(true);
+      }
+    } catch (error) {
+      console.error('Error updating favorites:', error);
+      toast.error('Failed to update favorites');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <motion.button
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      onClick={handleClick}
-      className={`rounded-full bg-white shadow-md hover:shadow-lg transition-shadow ${sizeClasses[size]} ${className}`}
-      aria-label="Favorites feature unavailable"
-      data-property-id={propertyId}
-    >
-      <FaHeart className="text-custom-terra/50 transition-colors" />
-    </motion.button>
+    <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={handleClick}
+        disabled={isLoading}
+        className={`rounded-full bg-white shadow-md hover:shadow-lg transition-shadow ${sizeClasses[size]} ${className}`}
+        aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+      >
+        <FaHeart 
+          className={`
+            ${isLoading ? 'animate-pulse' : ''} 
+            transition-colors
+            ${isFavorite ? 'text-custom-terra' : 'text-custom-terra/50'}
+          `} 
+        />
+      </motion.button>
+      {showText && (
+        <span className="text-white">{isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}</span>
+      )}
+    </div>
   );
 };
 

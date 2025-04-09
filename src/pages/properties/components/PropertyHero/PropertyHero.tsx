@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaArrowLeft, FaMapMarkerAlt, FaDollarSign, FaTag, FaHome } from 'react-icons/fa';
+import { FaArrowLeft, FaMapMarkerAlt, FaDollarSign, FaTag, FaHome, FaHeart } from 'react-icons/fa';
 import { formatImageUrl, getPlaceholderForType } from '../../../../utils/imageUtils';
 import { Property } from '../../../../types/property';
+import FavoriteButton from '../../../../components/common/FavoriteButton';
 
 // Update interface to remove favorite-related props
 export interface PropertyHeroProps {
@@ -90,6 +91,30 @@ const PropertyHero: React.FC<PropertyHeroProps> = ({
                   {locationOption.name}
                 </span>
               )}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-3">{property.name}</h1>
+            <p className="text-xl text-custom-cream mb-6">{property.location}</p>
+            
+            <div className="flex flex-col sm:flex-row gap-4">
+              {/* Book Now button (existing) */}
+              <button className="px-6 py-3 bg-custom-terra text-white rounded-lg hover:bg-custom-sage transition-colors flex items-center gap-2">
+                Book Now <span className="ml-1">→</span>
+              </button>
+              
+              {/* Add Favorite button below Book Now */}
+              <FavoriteButton 
+                propertyId={property.id} 
+                size="large" 
+                className="bg-white hover:bg-custom-cream"
+                showText={true}
+              />
             </div>
           </motion.div>
         </div>
