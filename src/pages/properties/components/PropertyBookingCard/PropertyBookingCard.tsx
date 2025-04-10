@@ -7,6 +7,8 @@ import { formatDate } from '../../../../utils/formatters';
 import BookingTicketModal from '../../../../components/property/BookingTicketModal';
 import { Ticket } from '../../../../types/ticket';
 import { toast } from 'react-toastify';
+import FavoriteButton from '../../../../components/common/FavoriteButton'; // Import FavoriteButton
+import { userService } from '../../../../api/api'; // Import userService
 
 interface PropertyBookingCardProps {
   property: Property;
@@ -112,27 +114,33 @@ const PropertyBookingCard: React.FC<PropertyBookingCardProps> = ({
           )}
         </motion.button>
         
-        {/* Add to Favorites Button */}
-        <motion.button
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={onToggleFavorite}
-          className={`w-full py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors ${
-            isFavorite 
-              ? 'bg-red-100 text-red-600 border border-red-300 hover:bg-red-200' 
-              : 'border border-custom-charcoal text-custom-charcoal hover:bg-custom-charcoal/10'
-          }`}
-        >
-          {isFavorite ? (
-            <>
-              <FaHeart className="text-red-500" /> Remove from Favorites
-            </>
-          ) : (
-            <>
-              <FaRegHeart /> Add to Favorites
-            </>
+        {/* Favorite Button */}
+        <div className="w-full mb-3">
+          {property && (
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="w-full py-3 border border-gray-300 rounded-lg flex items-center justify-center"
+            >
+              {userService.isLoggedIn() ? (
+                <FavoriteButton 
+                  propertyId={property.id} 
+                  size="medium" 
+                  showText={true} 
+                  className="text-custom-charcoal"
+                />
+              ) : (
+                <button
+                  onClick={() => navigate('/login')}
+                  className="flex items-center justify-center gap-2 text-custom-charcoal"
+                >
+                  <FaRegHeart /> Login to Save Favorites
+                </button>
+              )}
+            </motion.div>
           )}
-        </motion.button>
+        </div>
+
       </div>
 
       {/* Property Details */}
