@@ -35,6 +35,7 @@ const PropertyDetailsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false); // Add state for tracking favorites
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -87,6 +88,10 @@ const PropertyDetailsPage: React.FC = () => {
         if (propertyData.property_type && propertyTypeMapping[propertyData.property_type]) {
           setPropertyTypeInfo(propertyTypeMapping[propertyData.property_type]);
         }
+
+        // Check if property is in favorites
+        const savedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        setIsFavorite(savedFavorites.includes(parseInt(id)));
         
       } catch (err) {
         console.error('Error fetching property:', err);
@@ -100,6 +105,27 @@ const PropertyDetailsPage: React.FC = () => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
   }, [id]);
+
+  // Add toggle favorite function
+  const handleToggleFavorite = () => {
+    if (!id) return;
+    
+    const propertyId = parseInt(id);
+    const savedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    
+    let updatedFavorites;
+    if (isFavorite) {
+      // Remove from favorites
+      updatedFavorites = savedFavorites.filter((favId: number) => favId !== propertyId);
+    } else {
+      // Add to favorites
+      updatedFavorites = [...savedFavorites, propertyId];
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    setIsFavorite(!isFavorite);
+  };
 
   const handleDownloadPDF = async () => {
     if (!property) return;
@@ -227,6 +253,8 @@ const PropertyDetailsPage: React.FC = () => {
               onDownloadPDF={handleDownloadPDF}
               locationOption={locationOption}
               propertyTypeInfo={propertyTypeInfo}
+              isFavorite={isFavorite}
+              onToggleFavorite={handleToggleFavorite}
             />
           </div>
         </div>

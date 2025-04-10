@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaFilePdf, FaSpinner, FaDownload } from 'react-icons/fa';
+import { FaFilePdf, FaSpinner, FaDownload, FaHeart, FaRegHeart } from 'react-icons/fa';
 import { Property } from '../../../../types/property';
 import { formatDate } from '../../../../utils/formatters';
 import BookingTicketModal from '../../../../components/property/BookingTicketModal';
@@ -15,6 +15,8 @@ interface PropertyBookingCardProps {
   onDownloadPDF: () => void;
   locationOption?: { id: number; name: string; description?: string } | null;
   propertyTypeInfo?: { id: string; name: string; description: string } | null;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
 const PropertyBookingCard: React.FC<PropertyBookingCardProps> = ({ 
@@ -23,7 +25,9 @@ const PropertyBookingCard: React.FC<PropertyBookingCardProps> = ({
   isGeneratingPDF,
   onDownloadPDF,
   locationOption,
-  propertyTypeInfo
+  propertyTypeInfo,
+  isFavorite = false,
+  onToggleFavorite = () => {}
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -88,7 +92,7 @@ const PropertyBookingCard: React.FC<PropertyBookingCardProps> = ({
           disabled={isGeneratingPDF}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          className="w-full py-3 border border-custom-sage text-custom-sage rounded-lg font-medium hover:bg-custom-sage/10 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+          className="w-full py-3 border border-custom-sage text-custom-sage rounded-lg font-medium hover:bg-custom-sage/10 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 mb-3"
         >
           {isGeneratingPDF ? (
             <>
@@ -104,6 +108,28 @@ const PropertyBookingCard: React.FC<PropertyBookingCardProps> = ({
           ) : (
             <>
               <FaFilePdf /> Download PDF
+            </>
+          )}
+        </motion.button>
+        
+        {/* Add to Favorites Button */}
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={onToggleFavorite}
+          className={`w-full py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors ${
+            isFavorite 
+              ? 'bg-red-100 text-red-600 border border-red-300 hover:bg-red-200' 
+              : 'border border-custom-charcoal text-custom-charcoal hover:bg-custom-charcoal/10'
+          }`}
+        >
+          {isFavorite ? (
+            <>
+              <FaHeart className="text-red-500" /> Remove from Favorites
+            </>
+          ) : (
+            <>
+              <FaRegHeart /> Add to Favorites
             </>
           )}
         </motion.button>
