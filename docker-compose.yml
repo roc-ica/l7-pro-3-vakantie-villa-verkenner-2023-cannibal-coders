@@ -1,0 +1,48 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: vakantie_vila_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: vakantie_vila
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_LOG_CONSOLE: "true"
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./sql/database.sql:/docker-entrypoint-initdb.d/1.sql
+      - ./sql/insert_properties.sql:/docker-entrypoint-initdb.d/2.sql
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    command: --default-authentication-plugin=mysql_native_password
+
+  php:
+    build: ./server
+    container_name: vakantie_vila_php
+    restart: always
+    ports:
+      - "8000:80"
+    volumes:
+      - ./server:/var/www/html
+      - ./uploads:/var/www/html/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      bash -c "
+        mkdir -p /var/www/html/uploads/properties && 
+        chmod -R 777 /var/www/html/uploads && 
+        chmod -R 777 /var/www/html/uploads/properties && 
+        ls -la /var/www/html/uploads && 
+        apache2-foreground
+      "
+
+volumes:
+  mysql_data:
