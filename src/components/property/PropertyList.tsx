@@ -96,7 +96,7 @@ const PropertyCard: React.FC<{ property: Property; index: number }> = ({ propert
             {/* Price Tag */}
             <div className="absolute bottom-3 right-3 px-3 py-1 bg-custom-terra/90 text-white text-sm font-medium rounded-full z-10">
                 {formatPrice(typeof property.price === 'string' ? parseFloat(property.price) : (property.price as number || 0))}
-              <span className="text-xs opacity-80">/night</span>
+              <span className="text-xs opacity-80"></span>
             </div>
           </div>
           
