@@ -60,6 +60,7 @@ export const ticketService = {
         id: data.ticket_id,
         property_id: ticketData.property_id,
         user_name: ticketData.user_name,
+        email: ticketData.email, // Include email field
         question: ticketData.question,
         created_at: new Date().toISOString()
       };

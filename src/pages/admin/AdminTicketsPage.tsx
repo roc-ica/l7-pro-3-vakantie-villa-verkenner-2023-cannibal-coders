@@ -45,6 +45,7 @@ const AdminTicketsPage: React.FC = () => {
     const filtered = tickets.filter(ticket => 
       ticket.user_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ticket.property_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (ticket.email && ticket.email.toLowerCase().includes(searchTerm.toLowerCase())) || // Added email search
       ticket.question.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredTickets(filtered);
@@ -162,6 +163,13 @@ const AdminTicketsPage: React.FC = () => {
                       >
                         <span>Customer {getSortIcon('user_name')}</span>
                       </th>
+                      {/* Added email column */}
+                      <th 
+                        className="py-4 px-6 text-left text-sm font-medium text-gray-500 cursor-pointer"
+                        onClick={() => handleSort('email')}
+                      >
+                        <span>Email {getSortIcon('email')}</span>
+                      </th>
                       <th className="py-4 px-6 text-left text-sm font-medium text-gray-500">
                         <span>Request</span>
                       </th>
@@ -188,6 +196,16 @@ const AdminTicketsPage: React.FC = () => {
                         </td>
                         <td className="py-4 px-6 text-custom-charcoal">
                           {ticket.user_name}
+                        </td>
+                        {/* Added email column display */}
+                        <td className="py-4 px-6 text-custom-charcoal">
+                          {ticket.email ? (
+                            <a href={`mailto:${ticket.email}`} className="text-blue-600 hover:underline">
+                              {ticket.email}
+                            </a>
+                          ) : (
+                            <span className="text-gray-400">No email</span>
+                          )}
                         </td>
                         <td className="py-4 px-6 text-custom-charcoal">
                           <div className="max-w-md overflow-hidden text-ellipsis">

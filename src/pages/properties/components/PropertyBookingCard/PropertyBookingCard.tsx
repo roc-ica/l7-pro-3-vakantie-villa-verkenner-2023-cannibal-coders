@@ -38,12 +38,13 @@ const PropertyBookingCard: React.FC<PropertyBookingCardProps> = ({
     setIsModalOpen(true);
   };
   
-  const handleSubmitTicket = (name: string, question: string) => {
+  const handleSubmitTicket = (name: string, email: string, question: string) => {
     // Create a new ticket
     const ticket: Ticket = {
       property_id: property.id,
       property_name: property.name,
       user_name: name,
+      email: email,  // Added email field
       question: question,
       created_at: new Date().toISOString()
     };

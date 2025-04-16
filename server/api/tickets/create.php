@@ -28,6 +28,7 @@ $data = json_decode(file_get_contents('php://input'), true);
 // Validate input data
 if (!isset($data['property_id']) || 
     !isset($data['user_name']) || 
+    !isset($data['email']) ||     // Added email validation
     !isset($data['question'])) {
     http_response_code(400); // Bad Request
     echo json_encode(['status' => 'error', 'message' => 'Missing required fields']);
@@ -37,13 +38,14 @@ if (!isset($data['property_id']) ||
 try {
     // Prepare SQL statement
     $stmt = $pdo->prepare("
-        INSERT INTO tickets (property_id, user_name, question) 
-        VALUES (:property_id, :user_name, :question)
+        INSERT INTO tickets (property_id, user_name, email, question) 
+        VALUES (:property_id, :user_name, :email, :question)
     ");
     
     // Bind parameters and execute
     $stmt->bindParam(':property_id', $data['property_id'], PDO::PARAM_INT);
     $stmt->bindParam(':user_name', $data['user_name'], PDO::PARAM_STR);
+    $stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);  // Added email binding
     $stmt->bindParam(':question', $data['question'], PDO::PARAM_STR);
     $stmt->execute();
     

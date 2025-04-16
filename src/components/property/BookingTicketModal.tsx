@@ -9,18 +9,19 @@ interface BookingTicketModalProps {
   isOpen: boolean;
   onClose: () => void;
   property: Property;
-  onSubmitTicket: (name: string, question: string) => void;
+  onSubmitTicket: (name: string, email: string, question: string) => void; // Updated to include email
 }
 
 const BookingTicketModal: React.FC<BookingTicketModalProps> = ({ isOpen, onClose, property, onSubmitTicket }) => {
   const [userName, setUserName] = useState('');
+  const [email, setEmail] = useState(''); // Added email state
   const [question, setQuestion] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!userName.trim() || !question.trim()) {
+    if (!userName.trim() || !email.trim() || !question.trim()) { // Updated validation
       toast.error('Please fill in all fields');
       return;
     }
@@ -32,14 +33,16 @@ const BookingTicketModal: React.FC<BookingTicketModalProps> = ({ isOpen, onClose
       await ticketService.createTicket({
         property_id: property.id,
         user_name: userName,
+        email: email, // Added email field
         question: question
       });
       
       // Also call the parent component's onSubmitTicket for any additional logic
-      onSubmitTicket(userName, question);
+      onSubmitTicket(userName, email, question); // Updated to include email
       
       toast.success('Your ticket has been submitted successfully!');
       setUserName('');
+      setEmail(''); // Clear email field
       setQuestion('');
       onClose();
     } catch (error) {
@@ -94,6 +97,22 @@ const BookingTicketModal: React.FC<BookingTicketModalProps> = ({ isOpen, onClose
                   onChange={(e) => setUserName(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-terra"
                   placeholder="Enter your name"
+                  required
+                />
+              </div>
+
+              {/* Added email field */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-custom-charcoal mb-1">
+                  Your Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-terra"
+                  placeholder="Enter your email address"
                   required
                 />
               </div>
