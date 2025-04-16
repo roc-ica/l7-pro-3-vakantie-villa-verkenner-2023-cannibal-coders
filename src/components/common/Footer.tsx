@@ -162,9 +162,9 @@ const Footer: React.FC = () => {
               © {currentYear} Vakantie Vila. All rights reserved.
             </p>
             
-            <div className="flex items-center space-x-1">
-              <span className="text-custom-cream/70 mr-2">Made with</span>
-              <FaHeart className="text-custom-terra mx-1" />
+            <div className="flex items-center">
+              <span className="text-custom-cream/70">Made with</span>
+              <FaHeart className="text-custom-terra mx-2"/>
               <span className="text-custom-cream/70">in Australia</span>
             </div>
             

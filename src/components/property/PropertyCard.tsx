@@ -114,7 +114,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           <div className="flex justify-between items-center">
             <div className="text-custom-dark">
               <span className="font-bold text-lg">${property.price}</span>
-              <span className="text-sm text-gray-600"> / night</span>
+              <span className="text-sm text-gray-600"></span>
             </div>
             <button className="text-sm px-3 py-1 bg-custom-terra/10 text-custom-terra rounded-lg">
               View Details

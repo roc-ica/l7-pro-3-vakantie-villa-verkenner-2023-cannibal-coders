@@ -239,7 +239,6 @@ const FeaturedPropertyCard: React.FC<{ property: Property }> = ({ property }) =>
                 ? parseFloat(property.price) 
                 : property.price as number
               )}
-              <span className="text-xs font-normal text-gray-500">/night</span>
             </div>
             
             <div className="flex items-center space-x-2 text-custom-charcoal text-sm">
