@@ -13,6 +13,22 @@ const loadImage = (url: string): Promise<HTMLImageElement> => {
   });
 };
 
+// Helper to flatten transparent images to white background and get JPEG data URL
+const imageToJpegDataUrl = (img: HTMLImageElement): string => {
+  const canvas = document.createElement('canvas');
+  canvas.width = img.width;
+  canvas.height = img.height;
+  const ctx = canvas.getContext('2d');
+  if (ctx) {
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0);
+    return canvas.toDataURL('image/jpeg', 0.92);
+  }
+  // fallback: return original src
+  return img.src;
+};
+
 export const generatePropertyPDF = async (property: Property) => {
   const doc = new jsPDF();
   const margin = 20;
@@ -24,23 +40,70 @@ export const generatePropertyPDF = async (property: Property) => {
   yPosition += 15;
 
   try {
-    // Add main property image
-    if (property.image_url) {
-      const mainImage = await loadImage(property.image_url);
-      const aspectRatio = mainImage.width / mainImage.height;
-      const imageWidth = 170; // Max width for A4 page with margins
-      const imageHeight = imageWidth / aspectRatio;
-      
-      doc.addImage(
-        mainImage,
-        'JPEG',
-        margin,
-        yPosition,
-        imageWidth,
-        imageHeight,
-        undefined,
-        'MEDIUM'
-      );
+    // Collect all unique image URLs (main + additional)
+    const imageUrlsSet = new Set<string>();
+    // Add all property.images first (to avoid main image duplication)
+    if (property.images && Array.isArray(property.images)) {
+      for (const img of property.images) {
+        // Support both string and object with image_url
+        const url = typeof img === 'string' ? img : img?.image_url;
+        if (url && typeof url === 'string' && url.trim() !== '') {
+          imageUrlsSet.add(url);
+        }
+        if (imageUrlsSet.size >= 5) break;
+      }
+    }
+    // Add main image if not already included
+    if (
+      property.image_url &&
+      typeof property.image_url === 'string' &&
+      property.image_url.trim() !== '' &&
+      !imageUrlsSet.has(property.image_url)
+    ) {
+      imageUrlsSet.add(property.image_url);
+    }
+    const imagesToShow = Array.from(imageUrlsSet).slice(0, 5);
+
+    // Display images in a grid (2 per row)
+    const imageWidth = 80;
+    const imageHeight = 60;
+    let xPosition = margin;
+    let imagesInRow = 0;
+
+    for (const imgUrl of imagesToShow) {
+      try {
+        const image = await loadImage(imgUrl);
+        const jpegDataUrl = imageToJpegDataUrl(image);
+        // Check if we need to move to next page
+        if (yPosition + imageHeight > doc.internal.pageSize.height - margin) {
+          doc.addPage();
+          yPosition = margin;
+          xPosition = margin;
+          imagesInRow = 0;
+        }
+        doc.addImage(
+          jpegDataUrl,
+          'JPEG',
+          xPosition,
+          yPosition,
+          imageWidth,
+          imageHeight,
+          undefined,
+          'MEDIUM'
+        );
+        xPosition += imageWidth + 10;
+        imagesInRow++;
+        if (imagesInRow === 2) {
+          xPosition = margin;
+          yPosition += imageHeight + 10;
+          imagesInRow = 0;
+        }
+      } catch (imgErr) {
+        // Ignore failed images, continue with others
+        continue;
+      }
+    }
+    if (imagesInRow > 0) {
       yPosition += imageHeight + 10;
     }
 
@@ -76,55 +139,10 @@ export const generatePropertyPDF = async (property: Property) => {
       });
     }
 
-    // Add additional images if available
-    if (property.images && property.images.length > 0) {
-      yPosition += 10;
-      doc.setFontSize(14);
-      doc.text('Additional Images:', margin, yPosition);
-      yPosition += 10;
-
-      // Create a grid of images, 2 per row
-      const imageWidth = 80;
-      let xPosition = margin;
-      
-      for (const img of property.images) {
-        const image = await loadImage(img.image_url);
-        const aspectRatio = image.width / image.height;
-        const imageHeight = imageWidth / aspectRatio;
-
-        // Check if we need to move to next page
-        if (yPosition + imageHeight > doc.internal.pageSize.height - margin) {
-          doc.addPage();
-          yPosition = margin;
-          xPosition = margin;
-        }
-
-        doc.addImage(
-          image,
-          'JPEG',
-          xPosition,
-          yPosition,
-          imageWidth,
-          imageHeight,
-          undefined,
-          'MEDIUM'
-        );
-
-        // Move to next position
-        if (xPosition === margin) {
-          xPosition = margin + imageWidth + 10;
-        } else {
-          xPosition = margin;
-          yPosition += imageHeight + 10;
-        }
-      }
-    }
-
     // Save the PDF
     doc.save(`${property.name}-details.pdf`);
   } catch (error) {
     console.error('Error generating PDF with images:', error);
-    // Fallback to generate PDF without images if there's an error
     generatePDFWithoutImages(property);
   }
 };

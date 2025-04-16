@@ -143,7 +143,8 @@ const PropertyCard: React.FC<{ property: Property; index: number }> = ({ propert
                 {property.bathrooms && (
                   <div className="flex items-center text-sm">
                     <FaBath className="mr-1 text-custom-sage" />
-                    <span>{property.bathrooms}</span>
+                    {/* Show bathrooms as a whole number */}
+                    <span>{parseInt(property.bathrooms as any, 10)}</span>
                   </div>
                 )}
                 {property.capacity && (

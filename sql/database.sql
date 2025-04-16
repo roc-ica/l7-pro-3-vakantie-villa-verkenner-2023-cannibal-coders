@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS properties (
     address VARCHAR(255) NOT NULL,
     capacity INT NOT NULL,
     bedrooms INT NOT NULL,
-    bathrooms DECIMAL(3,1) DEFAULT 1.0,
+    bathrooms INT DEFAULT 1,
     price DECIMAL(10,2) NOT NULL,
     description TEXT,
     amenities TEXT,
