@@ -17,6 +17,7 @@ const PropertyPage: React.FC = () => {
   const [headerVisible, setHeaderVisible] = useState(true);
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState('default');
+  const [originalProperties, setOriginalProperties] = useState<any[]>([]);
 
   const handleSearch = async (filters: PropertyFilter) => {
     try {
@@ -32,33 +33,11 @@ const PropertyPage: React.FC = () => {
       const data = await propertyService.getProperties(filters);
       
       if (Array.isArray(data)) {
-        let sortedData = [...data];
+        // Save original data first
+        setOriginalProperties(data);
         
-        // Apply sorting
-        switch(sortOption) {
-          case 'price-asc':
-            sortedData.sort((a, b) => 
-              (typeof a.price === 'number' ? a.price : 0) - 
-              (typeof b.price === 'number' ? b.price : 0)
-            );
-            break;
-          case 'price-desc':
-            sortedData.sort((a, b) => 
-              (typeof b.price === 'number' ? b.price : 0) - 
-              (typeof a.price === 'number' ? a.price : 0)
-            );
-            break;
-          case 'rating':
-            sortedData.sort((a, b) => 
-              (b.rating || 0) - (a.rating || 0)
-            );
-            break;
-          // Default case uses server-side sorting
-          default:
-            break;
-        }
-        
-        dispatch(setProperties(sortedData));
+        // Then apply sorting
+        sortAndDispatchProperties(data);
         
         // Hide filters on mobile after search
         if (window.innerWidth < 1024) {
@@ -75,6 +54,41 @@ const PropertyPage: React.FC = () => {
     }
   };
 
+  // Create a function to sort properties and dispatch them
+  const sortAndDispatchProperties = (propsToSort: any[]) => {
+    let sortedData = [...propsToSort];
+    
+    // Apply sorting
+    switch(sortOption) {
+      case 'price-asc':
+        sortedData.sort((a, b) => {
+          // Cast prices to numbers for comparison, handle non-numeric cases
+          const priceA = parseFloat(a.price) || 0;
+          const priceB = parseFloat(b.price) || 0;
+          return priceA - priceB;
+        });
+        break;
+      case 'price-desc':
+        sortedData.sort((a, b) => {
+          // Cast prices to numbers for comparison, handle non-numeric cases
+          const priceA = parseFloat(a.price) || 0;
+          const priceB = parseFloat(b.price) || 0;
+          return priceB - priceA;
+        });
+        break;
+      case 'rating':
+        sortedData.sort((a, b) => 
+          (b.rating || 0) - (a.rating || 0)
+        );
+        break;
+      // Default case keeps original order
+      default:
+        break;
+    }
+    
+    dispatch(setProperties(sortedData));
+  };
+
   // Handle scroll effects
   useEffect(() => {
     const handleScroll = () => {
@@ -89,10 +103,10 @@ const PropertyPage: React.FC = () => {
     handleSearch({});
   }, []);
 
-  // Apply sorting when sort option changes
+  // Apply sorting when sort option changes without fetching new data
   useEffect(() => {
-    if (properties.length) {
-      handleSearch({});
+    if (originalProperties.length) {
+      sortAndDispatchProperties(originalProperties);
     }
   }, [sortOption]);
 
