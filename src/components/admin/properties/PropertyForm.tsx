@@ -179,6 +179,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, isEd
           console.log(`Sending featured:`, featuredValue);
           formDataToSubmit.append(key, featuredValue);
         }
+        else if (key === 'status') {
+          // Always send status as string, fallback to 'available'
+          formDataToSubmit.append(key, value ? value.toString() : 'available');
+        }
         else if (value !== undefined && value !== null) {
           formDataToSubmit.append(key, value.toString());
         }
