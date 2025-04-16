@@ -194,6 +194,7 @@ const PropertyDetailsPage: React.FC = () => {
               bedrooms={property.bedrooms || 0} 
               price={formattedPrice}
               propertyType={propertyTypeInfo?.name}
+              status={property.status} // Add this line to pass the status prop
             />
 
             {/* Image Gallery */}

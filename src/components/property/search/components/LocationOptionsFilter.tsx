@@ -52,7 +52,7 @@ const LocationOptionsFilter: React.FC<FilterComponentProps> = ({ filters, onChan
       {isLoading ? (
         <div className="text-center py-2">Loading location options...</div>
       ) : (
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-3">
           {locationOptions.map(option => {
             const isSelected = filters.locationOptionId === option.id;
             return (
@@ -61,16 +61,14 @@ const LocationOptionsFilter: React.FC<FilterComponentProps> = ({ filters, onChan
                 type="button"
                 onClick={() => handleLocationClick(option.id)}
                 title={option.description}
-                className={`px-3 py-2 rounded-md text-left flex items-center transition-colors ${
+                className={`flex items-center justify-center px-4 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow ${
                   isSelected 
-                    ? 'bg-custom-terra/10 text-custom-terra border border-custom-terra/30' 
-                    : 'bg-white border border-gray-200 text-custom-charcoal hover:bg-custom-cream/30'
+                    ? 'bg-custom-terra/20 text-custom-terra border-2 border-custom-terra/50 font-medium' 
+                    : 'bg-white border border-gray-200 text-gray-600 hover:bg-custom-cream/20'
                 }`}
               >
-                <div className={`w-4 h-4 mr-2 rounded-full transition-colors ${
-                  isSelected ? 'bg-custom-terra' : 'bg-gray-200'
-                }`}></div>
-                <span className="text-sm">{option.name}</span>
+                <FaMapMarkerAlt className={`text-lg mr-2 ${isSelected ? 'text-custom-terra' : 'text-gray-400'}`} />
+                <span className={`${isSelected ? 'font-medium' : ''}`}>{option.name}</span>
               </button>
             );
           })}

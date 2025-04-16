@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS properties (
     address VARCHAR(255) NOT NULL,
     capacity INT NOT NULL,
     bedrooms INT NOT NULL,
-    bathrooms DECIMAL(3,1) DEFAULT 1.0,
+    bathrooms INT DEFAULT 1,
     price DECIMAL(10,2) NOT NULL,
     description TEXT,
     amenities TEXT,
@@ -69,13 +69,13 @@ CREATE TABLE IF NOT EXISTS `tickets` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `property_id` int(11) NOT NULL,
   `user_name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `question` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `property_id` (`property_id`),
   CONSTRAINT `tickets_ibfk_1` FOREIGN KEY (`property_id`) REFERENCES `properties` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 
 -- Create bookings table with CASCADE delete
 CREATE TABLE IF NOT EXISTS bookings (

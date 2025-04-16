@@ -3,6 +3,7 @@ export interface Ticket {
   property_id: number;
   property_name?: string;
   user_name: string;
+  email: string; // Added required email field
   question: string;
   created_at?: string;
 }
