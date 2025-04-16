@@ -27,7 +27,7 @@ const AmenitiesFilter: React.FC<FilterComponentProps> = ({ filters, onChange }) 
   
   return (
     <CollapsibleSection title="Amenities" icon={FaWifi} defaultExpanded={true}>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-3">
         {amenityOptions.map(amenity => {
           const isChecked = (filters.amenities || []).includes(amenity.value);
           const AmenityIcon = amenity.icon;
@@ -36,17 +36,14 @@ const AmenitiesFilter: React.FC<FilterComponentProps> = ({ filters, onChange }) 
               key={amenity.value}
               type="button"
               onClick={() => handleAmenityToggle(amenity.value)}
-              className={`flex items-center px-3 py-2 rounded-md transition-colors ${
+              className={`flex items-center justify-center px-4 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow ${
                 isChecked 
-                  ? 'bg-custom-terra/10 text-custom-terra border border-custom-terra/30'
-                  : 'bg-white border border-gray-200 text-custom-charcoal hover:bg-custom-cream/30'
+                  ? 'bg-custom-terra/20 text-custom-terra border-2 border-custom-terra/50 font-medium'
+                  : 'bg-white border border-gray-200 text-gray-600 hover:bg-custom-cream/20'
               }`}
             >
-              <div className={`w-4 h-4 mr-2 rounded-full transition-colors ${
-                isChecked ? 'bg-custom-terra' : 'bg-gray-200'
-              }`}></div>
-              <AmenityIcon className="mr-1 text-sm" />
-              <span className="text-sm">{amenity.label}</span>
+              <AmenityIcon className={`text-lg mr-2 ${isChecked ? 'text-custom-terra' : 'text-gray-400'}`} />
+              <span className={`${isChecked ? 'font-medium' : ''}`}>{amenity.label}</span>
             </button>
           );
         })}
