@@ -62,49 +62,119 @@ export const generatePropertyPDF = async (property: Property) => {
     ) {
       imageUrlsSet.add(property.image_url);
     }
-    const imagesToShow = Array.from(imageUrlsSet).slice(0, 5);
 
-    // Display images in a grid (2 per row)
-    const imageWidth = 80;
-    const imageHeight = 60;
-    let xPosition = margin;
-    let imagesInRow = 0;
-
-    for (const imgUrl of imagesToShow) {
+    // Make sure main property image is first in the set
+    const imagesToShow = Array.from(imageUrlsSet);
+    
+    // Re-order: If property.image_url exists, make it the first image
+    if (
+      property.image_url &&
+      typeof property.image_url === 'string' &&
+      property.image_url.trim() !== ''
+    ) {
+      // Remove it from current position (if exists in array)
+      const mainImageIndex = imagesToShow.indexOf(property.image_url);
+      if (mainImageIndex > 0) {
+        imagesToShow.splice(mainImageIndex, 1);
+      }
+      // Add it as the first image
+      imagesToShow.unshift(property.image_url);
+    }
+    
+    if (imagesToShow.length > 0) {
+      // Display first image as hero image (large, full width)
       try {
-        const image = await loadImage(imgUrl);
-        const jpegDataUrl = imageToJpegDataUrl(image);
-        // Check if we need to move to next page
-        if (yPosition + imageHeight > doc.internal.pageSize.height - margin) {
-          doc.addPage();
-          yPosition = margin;
-          xPosition = margin;
-          imagesInRow = 0;
-        }
+        const heroImage = await loadImage(imagesToShow[0]);
+        const heroJpegDataUrl = imageToJpegDataUrl(heroImage);
+        
+        // Calculate aspect ratio for proper scaling
+        const aspectRatio = heroImage.width / heroImage.height;
+        
+        // Make hero image much larger (nearly full width)
+        const heroImageWidth = 170; // Almost full width of the page
+        const heroImageHeight = heroImageWidth / aspectRatio; // Maintain aspect ratio
+        
+        // Add "Main Property Image" subtitle
+        doc.setFontSize(12);
+        doc.text("Main Property Image", margin, yPosition);
+        yPosition += 6;
+        
         doc.addImage(
-          jpegDataUrl,
+          heroJpegDataUrl,
           'JPEG',
-          xPosition,
+          margin,
           yPosition,
-          imageWidth,
-          imageHeight,
+          heroImageWidth,
+          heroImageHeight,
           undefined,
           'MEDIUM'
         );
-        xPosition += imageWidth + 10;
-        imagesInRow++;
-        if (imagesInRow === 2) {
-          xPosition = margin;
-          yPosition += imageHeight + 10;
-          imagesInRow = 0;
+        
+        yPosition += heroImageHeight + 15; // More space after hero image
+        
+        // Add a separator line
+        doc.setDrawColor(200, 200, 200);
+        doc.line(margin, yPosition - 10, margin + 170, yPosition - 10);
+        
+        // If there are additional images, add a subtitle for them
+        if (imagesToShow.length > 1) {
+          doc.setFontSize(12);
+          doc.text("Additional Property Images", margin, yPosition);
+          yPosition += 10;
         }
-      } catch (imgErr) {
-        // Ignore failed images, continue with others
-        continue;
+      } catch (heroImgErr) {
+        console.error('Failed to load hero image:', heroImgErr);
       }
-    }
-    if (imagesInRow > 0) {
-      yPosition += imageHeight + 10;
+      
+      // Display remaining images in a grid (2 per row)
+      if (imagesToShow.length > 1) {
+        const imageWidth = 80;
+        const imageHeight = 60;
+        let xPosition = margin;
+        let imagesInRow = 0;
+        
+        // Start from second image (index 1)
+        for (let i = 1; i < imagesToShow.length; i++) {
+          try {
+            const image = await loadImage(imagesToShow[i]);
+            const jpegDataUrl = imageToJpegDataUrl(image);
+            
+            // Check if we need to move to next page
+            if (yPosition + imageHeight > doc.internal.pageSize.height - margin) {
+              doc.addPage();
+              yPosition = margin;
+              xPosition = margin;
+              imagesInRow = 0;
+            }
+            
+            doc.addImage(
+              jpegDataUrl,
+              'JPEG',
+              xPosition,
+              yPosition,
+              imageWidth,
+              imageHeight,
+              undefined,
+              'MEDIUM'
+            );
+            
+            xPosition += imageWidth + 10;
+            imagesInRow++;
+            if (imagesInRow === 2) {
+              xPosition = margin;
+              yPosition += imageHeight + 10;
+              imagesInRow = 0;
+            }
+          } catch (imgErr) {
+            // Ignore failed images, continue with others
+            continue;
+          }
+        }
+        
+        if (imagesInRow > 0) {
+          yPosition += imageHeight + 10;
+        }
+      }
     }
 
     // Add property details
