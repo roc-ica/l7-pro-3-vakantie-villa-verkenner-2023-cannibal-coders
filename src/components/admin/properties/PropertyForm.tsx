@@ -183,6 +183,18 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, isEd
           formDataToSubmit.append(key, value.toString());
         }
       });
+
+      // Append main image file if present (required for create)
+      if (!isEditing && mainImage) {
+        formDataToSubmit.append('main_image', mainImage);
+      }
+
+      // Append additional images if present
+      if (additionalImages.length > 0) {
+        additionalImages.forEach((file, idx) => {
+          formDataToSubmit.append('additional_images[]', file);
+        });
+      }
       
       // For debugging
       formDataToSubmit.forEach((value, key) => {
